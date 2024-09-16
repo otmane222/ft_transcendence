@@ -7,17 +7,11 @@ import { useContext } from "react"
 import {ThemeContext} from '../../Contexts/ThemeContext'
 
 import Avatar from "../../assets/avatar.png"
-import Ava1 from "../../assets/ava1.png"
-import Ava2 from "../../assets/ava2.png"
-import Ava3 from "../../assets/ava3.png"
 import Pic from "../../assets/profile.jpeg"
 
 
 import { LineChart } from '@mui/x-charts/LineChart';
-import { styled } from '@mui/material/styles';
-import { ResponsiveChartContainer } from '@mui/x-charts/ResponsiveChartContainer';
-import { LinePlot } from '@mui/x-charts/LineChart';
-import { useDrawingArea } from '@mui/x-charts/hooks';
+
 
 import Status from "./status"
 
@@ -26,8 +20,7 @@ export default function FriendStatus() {
 	const theme = useContext(ThemeContext);
 
     return (
-		// shadow-[0_5px_5px_0px_rgba(0,0,0,1)] 
-		<div className=" flex flex-col   w-[80%] h-vh">
+		<div className=" flex flex-col w-[80%] h-vh">
 			<div className={` flex flex-col rounded-sm ml-[1px] mt-[10px] w-[800px] h-[530px] ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"}`}>
 				<div className="flex ">
 					<div className=" self-center h-[90%] w-[60%] bg flex flex-col justify-start items-center">
@@ -38,15 +31,14 @@ export default function FriendStatus() {
 							<div className=" flex flex-col justify-between h-[45%] w-[87%] ">
 								<p className={`text-[10px] font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>enjoy</p>
 								<p className={`text-[12px] font-semibold  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>aamhamdi</p>
-								
 							</div>
 						</div>
 						<div className="flex flex-col  flex-wrap grow h-[30px] w-[85%]">
 							<div className="  flex  justify-between items-center h-[20px] mb-[2%]">
-								<p className={`text-[10px] font-light ${theme === 'light' ? "text-lightText" : "text-darkText"} `}><span className="text-[15px] text-[#ff0000]"> 30</span>/100</p>
+								<p className={`text-[10px] font-light ${theme === 'light' ? "text-lightText" : "text-darkText"} `}><span className="text-[15px]"> 30</span>/100</p>
 								<p className={`text-[13px] font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>4.30 LVL</p>
 							</div>
-							<div className={`${theme === 'light' ? "bg-[#D9D9D9]" : "bg-[#ffffff]"} max-h-[20px]  h-[20px] rounded-[7px] mt-[1px]`}>
+							<div className={`${theme === 'light' ? "bg-lightText" : "bg-[#ffffff]"} max-h-[20px]  h-[20px] rounded-[7px] mt-[1px]`}>
 								<div className={` bg-[#C53F3F] h-full rounded-[6px] w-[30%] `}></div>
 							</div>
 						</div>

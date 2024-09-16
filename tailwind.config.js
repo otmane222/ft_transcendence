@@ -7,16 +7,17 @@ export default {
     extend: {
       colors : {
         primary : '#C53F3F',
-        lightBg : '#F5F5F5',
+        lightBg : '#F5F5FF',
         lightText : '#374151',
         lightItems : 'white',
         darkBg : '#14202B',
         darkText : 'white',
-        darkItems : '#263238'
+        darkItems : '#1E292F'
       },
       backgroundImage: {
         'hero': "url('/Ping.png')",
         'pong': "url('/wallpaperflare.png')",
+        'pat': "url('/14.svg')",
       },
       fontFamily : {
         'kaushan' : ['"kaushan script"', "sans-serif"],

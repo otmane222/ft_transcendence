@@ -59,7 +59,7 @@ function EmojiesSearch({query}) {
             .catch(err => {
                 console.log(err)
             })
-        }, 300)
+        }, 500)
 
         return () => {
             clearTimeout(timer);
@@ -93,7 +93,7 @@ function EmojesCategories({textHandler, text}) {
             }).catch(err => {
                 console.log(err)
             }) 
-        }, 300)
+        }, 500)
 
         return () => {
             clearTimeout(timer)

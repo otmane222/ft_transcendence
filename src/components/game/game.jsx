@@ -7,6 +7,7 @@ import FriendImg from '../assets/FriendImg'
 import AiImg from "../assets/AiImg"
 import TornmentImg from "../assets/TornmentImg"
 import { Link } from "react-router-dom"
+import { theme } from "flowbite-react"
 
 
 function Player() {
@@ -128,12 +129,13 @@ function CreatRoom({handler}) {
     )
 }
 
+// SM MD LG XL 2XL
 
 
 function Hero({color}) {
     
     return (
-        <div className=" hero mt-4 border-[.5px] shadow-sm border-gray-600 h-2/3 sm:h-1/2 max-h-[800px] sm:max-h-[500px]  bg-hero bg-cover rounded-sm">
+        <div className=" hero border-[.5px] shadow-sm border-gray-600 h-2/3 sm:h-1/2 max-h-[800px] sm:max-h-[500px]  bg-hero bg-cover rounded-sm">
             <div className="flex items-center justify-center h-full w-full backdrop-blur-md rounded-sm p-1 bg-[#141323]/65">
                 <div className="grid place-items-center sm:flex items-center justify-center max-w-[1500px] ">
                     <div className="img overflow-y-visible w-[50%] h-[350px] p-2 sm:mr-4 flex justify-center items-center">
@@ -143,10 +145,12 @@ function Hero({color}) {
                         <div className="">
                             <p className="text-[.7rem] font-light">welcome to pong comunity</p>
                             <h3 className="text-[3rem] font-kaushan">its time to play ping pong</h3>
-                            <button style={{backgroundColor : color}} className={`flex justify-between h-[3rem] w-[8rem] items-center p-2 px-4 text-white rounded-2xl mt-10`}>
-                                <p className="mr-2 text-[1rem] capitalize font-kaushan">Play now</p>
-                                <FontAwesomeIcon className="text-[1rem]" icon={faGamepad} />
-                            </button>
+                            <Link to="room/1">
+                                <button style={{backgroundColor : color}} className={`flex justify-between h-[3rem] w-[8rem] items-center p-2 px-4 text-white rounded-3xl mt-10`}>
+                                    <p className="mr-2 text-[1rem] capitalize font-kaushan">Play now</p>
+                                    <FontAwesomeIcon className="text-[1rem]" icon={faGamepad} />
+                                </button>
+                            </Link>
                         </div>
                     </div>
                 </div>
@@ -158,7 +162,7 @@ function Hero({color}) {
 function Card({text , img, color, handler}) {
     const theme = useContext(ThemeContext);
     return(
-        <div className={`card h-[400px]  p-2 w-full rounded-sm shadow-sm ${theme === 'light' ? "bg-lightItems" : "bg-darkItems"}`}>
+        <div className={`card h-[400px] p-2 w-full max-w-[450px] rounded-sm ${theme === 'light' ? "bg-lightItems border-lightText/90" : " bg-darkItems border-darkText/10"}`}>
             <div className="img w-full h-2/3 flex items-center justify-center ml-[50%] translate-x-[-50%] m-2">
                 {img}
             </div>
@@ -182,14 +186,14 @@ function Card({text , img, color, handler}) {
 function Cards({color, handler}) {
     const theme = useContext(ThemeContext)
     return (
-        <div className={`cards my-8 ${theme === 'light' ? "text-lightText" : "text-darkText"}`}>
+        <div className={`cards mt-2 ${theme === 'light' ? "text-lightText" : "text-darkText"} p-2`}>
             <div className={`header mx-4 ${""}`}>
                 <h1 className="font-kaushan text-[20px]">game modes:</h1>
-                <p className="text-[10px] my-4">pick a game to play in</p>
+                <p className="text-[10px] mt-2">pick a game to play in</p>
             </div>
-            <div className="cards mt-8 grid grid-flow-col-1 px-10 lg:grid-cols-2 lg:px-0 xl:grid-cols-3 xl:px-0 gap-4">
+            <div className="cards mt-4 grid place-items-center grid-flow-col-1 px-10 lg:grid-cols-2 lg:px-0 xl:grid-cols-3 xl:px-0 gap-4">
                 <Card text="play vs friend" img={<FriendImg color={color} />} color={color} handler={handler} />
-                <Link to="room/1">
+                <Link to="room/1" className="w-full flex justify-center">
                     <Card text="play vs ai" img={<AiImg color={color} />}  color={color}  />
                 </Link>
                 <Card text="play on tornemnt" img={<TornmentImg color={color} />} color={color} handler={handler} />
@@ -201,10 +205,11 @@ function Cards({color, handler}) {
 
 export default function Game() {
     const color = useContext(ColorContext).substring(6, 13)
+    const theme = useContext(ThemeContext)
     const [step, setStep] = useState(null)
     return (
         <>
-            <div className="game w-full h-[94vh] mt-2 overflow-y-auto relative">
+            <div className={` mt-2 game w-full h-[94vh] overflow-y-auto relative `}>
                 <div className=" h-full mx-auto relative">
                     <Hero color={color} />
                     <Cards color={color} handler={setStep} />

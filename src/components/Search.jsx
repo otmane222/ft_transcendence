@@ -26,11 +26,11 @@ export default function Search() {
                     `}>
                     
                     <FontAwesomeIcon icon={faSearch} className="text-[10px] mr-1"  />
-                    <input type="text" placeholder="search..." className="bg-transparent border-none text-[10px] ml-1 focus:outline-none" />
+                    <input type="text" placeholder="search..." className="w-full h-full border-none bg-transparent text-[10px] ml-1 focus:outline-none" />
                 </div>
                 <div className={`
                     ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"}
-                   w-[150px]  h-full z-10 rounded-sm ml-2 shadow-sm cursor-pointer`} onClick={() => setShow(!show)}>
+                   w-[190px] h-full z-10 rounded-sm ml-2 shadow-sm cursor-pointer`} onClick={() => setShow(!show)}>
                     <div className="flex items-center justify-center h-full">
                         <div className="infos">
                             <div className="top flex text-[8px] mb-1 justify-between items-center">
@@ -49,7 +49,7 @@ export default function Search() {
                                     <p>Pfrofile</p>
                                     <FontAwesomeIcon icon={faUser} />
                                 </Link>
-                            </li>
+                            </li> 
                             <li>
                                 <Link to="setings" className="flex w-full justify-between items-center px-4 my-4 ">
                                     <p>Setings</p>

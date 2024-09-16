@@ -50,7 +50,7 @@ export default function Notifications() {
 
     return (
         <div className={`min-h-[60px] rounded-sm ${theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText"} shadow-sm w-full` }>
-            <div className="cursor-pointer flex justify-between w-full h-[60px] items-center px-4" onClick={() => handler(!show)}>
+            <div className="cursor-pointer flex justify-between w-full h-[50px] items-center px-4" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-[14px] relative">
                     <h1 className="mr-2 font-bold font-kaushan">Notifications</h1>
                     <FontAwesomeIcon icon={faBell} className="relative" />
@@ -81,7 +81,7 @@ export function Invites() {
 
     return (
         <div className={`w-full min-h-[60px] rounded-sm mt-2 ${theme === 'light' ? "bg-lightItems text-lightText" : " bg-darkItems text-darkText"} shadow-sm`}>
-            <div className="header px-4 h-[60px]  relative cursor-pointer flex text-[14px] justify-between w-full items-center" onClick={() => handler(!show)}>
+            <div className="header px-4 h-[50px] relative cursor-pointer flex text-[14px] justify-between w-full items-center" onClick={() => handler(!show)}>
                 <div className="content flex items-center text-[14px] relative">
                     <h1 className="mr-2 font-bold font-kaushan">invites</h1>
                     <FontAwesomeIcon icon={faUserPlus} />

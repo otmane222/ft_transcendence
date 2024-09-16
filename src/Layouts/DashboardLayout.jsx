@@ -16,7 +16,7 @@ export default function DashboardLayout() {
           <SideBar /> 
           <main className='w-full ml-2 flex'>
 
-            <div className="main flex-grow min-w-[300px] sm:min-w-[500px]">
+            <div className="main flex-grow min-w-[500px] sm:min-w-[500px]">
               <div className="nav w-full flex-grow">
                 <Search />
               </div>

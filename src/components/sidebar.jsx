@@ -57,10 +57,10 @@ function SideBar() {
 								<FontAwesomeIcon  icon={faGear} />
 								<p className='text-[10px]'>setings</p>
 							</Link>
-							<a className='text-center'>
+							<Link to="../auth/login" className='text-center'>
 								<FontAwesomeIcon icon={faRightToBracket} />
 								<p className='text-[10px]'>Logout</p>
-							</a>
+							</Link>
 						</div>
 			</header>
 		</div>

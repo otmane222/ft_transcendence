@@ -16,7 +16,7 @@ export default function Tournament() {
 				<p className={`text-[38px] font-kaushan  mb-2 ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Tournament</p>
 				<p className={`ml-2 text-[15px]  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{players} players, {rounds} rounds, 2min for round</p>
 			</div>
-			<div className='   mt-[100px]'>
+			<div className='mt-[100px] flex justify-center'>
 				{/* array will be passed as an argument to  */}
 				<Table />
 			</div>

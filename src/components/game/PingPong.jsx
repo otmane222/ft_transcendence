@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClose, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { faCirclePause, faImage } from '@fortawesome/free-regular-svg-icons';
+import { flushSync } from 'react-dom';
 
 class Ball {
     constructor(context) {
@@ -25,7 +26,7 @@ class Ball {
             this.agl = Math.random() * 2 * Math.PI;
         }
         this.direction = {x:Math.cos(this.agl), y:Math.sin(this.agl)}
-        this.valocity = 0.4;
+        this.valocity = 0.25;
     }
 
     draw() {
@@ -48,7 +49,7 @@ class Paddle {
         this.ctx = context;
         this.x = x;
         this.y = y;
-        this.width = 100;
+        this.width = 70;
         this.height = 10;
     }
 
@@ -70,8 +71,7 @@ class Paddle {
 }
 
 class Game {
-    constructor(context, handler, players, color) {
-        this.color = color;
+    constructor(context, handler, players) {
         this.handler = handler;
         this.score = players;
         this.width = context.canvas.width;
@@ -83,7 +83,8 @@ class Game {
         this.paddleB = new Paddle(this.ctx, this.width / 2 - 50 , this.height - 15);
         this.update = this.update.bind(this);
         this.lastTime = null;
-        this.isEnded = false;
+        this.isEnded = true;
+        this.isPaused = true;
         this.player1_index = 0;
         this.player2_index = players[0].score.length - 1;
     }
@@ -100,28 +101,31 @@ class Game {
         this.handler([...this.score])
         this.ball.reset();
         this.isEnded = this.isLose();
+        console.log(this.score[0].total , this.score[1].total)
     }
 
     isLose() {
-        return (this.player1_index == 2 || this.player2_index == 0)
+        return (this.score[0].total == 3 || this.score[1].total == 3)
     }
 
     update(time) {
         if (this.lastTime) {
             let delta = time - this.lastTime;
             this.ctx.clearRect(0,0,this.width, this.height);
-            this.ball.update(delta);
-            if (this.ball.y <= this.paddleA.y + this.paddleA.height && this.ball.x >= this.paddleA.x && this.ball.x <= this.paddleA.x + this.paddleA.width)
-                this.ball.direction.y *= -1;
-            else if (this.ball.y >= this.paddleB.y && this.ball.x >= this.paddleB.x && this.ball.x <= this.paddleB.x + this.paddleB.width)
-                this.ball.direction.y *= -1;
-            else if (this.ball.y < 0) {
-                this.updateScore(0, this.player1_index)
-                this.player1_index++;
-            }
-            else if(this.ball.y > this.height) {
-                this.updateScore(1, this.player2_index);
-                this.player2_index--;
+            if (!this.isEnded && !this.isPaused) {
+                this.ball.update(delta);
+                if (this.ball.y <= this.paddleA.y + this.paddleA.height && this.ball.x >= this.paddleA.x && this.ball.x <= this.paddleA.x + this.paddleA.width)
+                    this.ball.direction.y *= -1;
+                else if (this.ball.y >= this.paddleB.y && this.ball.x >= this.paddleB.x && this.ball.x <= this.paddleB.x + this.paddleB.width)
+                    this.ball.direction.y *= -1;
+                else if (this.ball.y < 0) {
+                    this.updateScore(0, this.player1_index)
+                    this.player1_index++;
+                }
+                else if(this.ball.y > this.height) {
+                    this.updateScore(1, this.player2_index);
+                    this.player2_index--;
+                }
             }
         }
         this.lastTime = time;
@@ -129,57 +133,63 @@ class Game {
     }
 
     draw() {
+        // console.log(this.isEnded)
         this.ctx.strokeStyle = 'white'
         this.ctx.fillStyle = 'white'
         this.ctx.beginPath();
-        this.ctx.moveTo(0, this.height/2);
-        this.ctx.lineTo(this.width, this.height/2);
-        this.ctx.stroke();
         this.paddleA.draw();
         this.paddleB.draw();
-        this.ball.draw();
-        if (!this.isEnded) 
-            window.requestAnimationFrame(this.update);
+        if (!this.isEnded) {
+            this.ball.draw();
+            this.ctx.moveTo(0, this.height/2);
+            this.ctx.lineTo(this.width, this.height/2);
+            this.ctx.stroke();
+        }
+        window.requestAnimationFrame(this.update);
     }
     
     setup() {
-        window.addEventListener('keyup', (e) => {
+        window.addEventListener('keydown', (e) => {
             if (e.key == 'a')
-                this.paddleA.update(-100);
+                this.paddleA.update(-10);
             else if (e.key == 'd')
-                this.paddleA.update(100);
+                this.paddleA.update(10);
             else if (e.key == 'ArrowLeft')
-                this.paddleB.update(-100);
+                this.paddleB.update(-10);
             else if (e.key == 'ArrowRight')
-                this.paddleB.update(100);
+                this.paddleB.update(10);
         })
         this.draw();
     }
 }
 
 function Score({data}) {
-    
+    const color = useContext(ColorContext).substring(6,13)
     return (
-        <div className="score flex justify-center h-1/6 items-center">
-            <div className="h-[80px] w-[600px] rounded-sm bg-darkBg/60 backdrop-blur-lg flex justify-between px-4 items-center">
-                <div className=" flex">
-                    <div className="mr-4 border-[.3px] w-[40px] h-[40px] flex justify-center items-center rounded-full">
+        <div className="score flex justify-center h-1/8 items-center">
+            <div className="h-[50px] w-[400px] rounded-sm bg-darkBg/60 backdrop-blur-lg flex justify-between px-4 items-center">
+                <div className=" flex items-center">
+                    <div className="mr-4 border-[.3px] w-[30px] h-[30px] flex justify-center items-center rounded-full">
                         <img src="/aamhamdi1.jpeg" className="max-w-full rounded-full max-h-full" alt="" />
                     </div>
-                    <div className="text-[16px]">
+                    <div className="text-[14px]">
                         <h1>{data[0].nickname}</h1>
-                        <h4 className="text-[12px] uppercase">{data[0].name}</h4>
+                        <ul style={{accentColor:color}} className='flex justify-evenly'>
+                            {data[0].score.map(s => <li><input className=' h-[10px]' type='radio' checked={s} /></li>)}
+                        </ul>
                     </div>
                 </div>
                 <div className="score text-center">
                     <div className="time">{data[0].total} | {data[1].total}</div>
                 </div>
-                <div className=" flex">
-                    <div className="text-[16px] text-right">
+                <div className=" flex items-center">
+                    <div className="text-[14px] text-right">
                         <h1>{data[1].nickname}</h1>
-                        <h4 className="text-[12px] uppercase">{data[1].name}</h4>
+                        <ul style={{accentColor:color}} className='flex justify-evenly'>
+                            {data[1].score.map(s => <li><input className='h-[10px]' type='radio' checked={s} /></li>)}
+                        </ul> 
                     </div>
-                    <div className="ml-4 border-[.3px] w-[40px] h-[40px] flex justify-center items-center rounded-full">
+                    <div className="ml-4 border-[.3px] w-[30px] h-[30px] flex justify-center items-center rounded-full">
                         <img src="/aamhamdi1.jpeg" className="max-w-full rounded-full max-h-full" alt="" />
                     </div>
                 </div> 
@@ -194,14 +204,15 @@ const players = [
 ]
 
 
-function PlayerWon({Restarthandler, quitHandler , color}) {
+function PlayerWon({Restarthandler, quitHandler}) {
+    const color = useContext(ColorContext).substring(6,13)
     return (
         <div className='absolute z-10 text-center bg-darkBg/50 backdrop-blur-md p-2 flex justify-center items-center w-[50%] h-[200px] rounded-sm top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
             <div>
                 <h1 className='text-[40px] uppercase mb-10'>you win</h1>
                 <div className="actions text-[15px] p-1 flex justify-center mt-10">
-                        <button className='p-1 h-[35px] bg-primary rounded-sm capitalize mr-2 w-[90px]' onClick={Restarthandler}>restart</button>
-                        <button className='p-1 h-[35px] bg-primary capitalize rounded-sm mr-2 w-[90px]' onClick={quitHandler}>Quit</button>
+                    <button style={{background:color}} className='p-1 h-[35px] rounded-sm capitalize mr-2 w-[90px]' onClick={Restarthandler}>restart</button>
+                    <button style={{background:color}} className='p-1 h-[35px] capitalize rounded-sm mr-2 w-[90px]' onClick={quitHandler}>Quit</button>
                 </div>
             </div>
         </div>
@@ -209,15 +220,51 @@ function PlayerWon({Restarthandler, quitHandler , color}) {
 }
 
 
-export default function PingPong() {
-    const theme = useContext(ThemeContext)
+function ActionsMenu({rotateHandler, pauseHandler}) {
+    return (
+        <>
+            <div className='bg-darkBg/50 backdrop-blur-md text-[16px] w-14 rounded-sm h-[170px] absolute right-0 top-0 flex justify-center items-center'>
+                <ul>
+                    <li className='text-center'><FontAwesomeIcon icon={faClose} /></li>
+                    <li className='mt-4 text-center' onClick={rotateHandler}><FontAwesomeIcon icon={faRotate}/></li>
+                    <li className='mt-4 text-center'><FontAwesomeIcon  icon={faImage}/></li>
+                    <li className='mt-4 text-center' onClick={pauseHandler} ><FontAwesomeIcon  icon={faCirclePause}/></li>
+                </ul>
+            </div>
+        </>
+    )
+}
+
+function ScorePoints({player}) {
+
     const color = useContext(ColorContext).substring(6,13)
+
+    return (
+        <>
+            <div className=' absolute top-[50%] right-20 translate-y-[-50%] flex justify-center'>
+                <div >
+                    <ul style={{accentColor:color}} className='w-10'>
+                    {player.map(p => p.score.map((item, index) => <li key={index}><input type="radio" onChange={() => {}} checked={item} /></li>))}
+                    </ul>
+                </div>
+            </div>
+        </>
+    )
+}
+
+
+export default function PingPong() {
+    let interval;
+    const theme = useContext(ThemeContext)
     const canvasRef = useRef(null);
     const canvaParentRef = useRef(null);
     const gameRef = useRef(null);
     const [player, setPlayer] = useState(players);
     const [restart, setRestart] = useState(false);
+    const [deg, setDeg] = useState(90);
     const navigate = useNavigate();
+    const [isStarted, setIsStarted] = useState(false)
+    const [startStatus, setStartStatus] = useState(3)
 
     function resetHandler() {
         setPlayer([{...player[0], total:0, score:[0,0,0]},{...player[1], total:0, score:[0,0,0]}])
@@ -228,24 +275,37 @@ export default function PingPong() {
         navigate('/dashboard/game');
     }
 
-    useEffect(() => {
-        let rect = canvaParentRef.current.getBoundingClientRect();
-        canvasRef.current.width = rect.width - 20;
-        canvasRef.current.height = rect.height - 20;
-        window.addEventListener('resize', () => {
-            rect = canvaParentRef.current.getBoundingClientRect();
-            canvasRef.current.width = rect.width - 20;
-            canvasRef.current.height = rect.height - 20;
+    function rotateHandler() {
+        flushSync(() => {
+            gameRef.current.isPaused = true
+            setDeg(prev => (prev + 90))
         })
-    }, [])
+        canvaParentRef.current.style = `transform: rotateZ(${deg}deg)`
+    }
 
+    function pauseHandler() {
+        gameRef.current.isPaused = !gameRef.current.isPaused
+    }
+
+    function start_handler() {
+        interval = setInterval(() => {
+            setStartStatus(prev => prev == 1 ? 'ready ?' : prev - 1)
+        }, 1000);
+    } 
     
     useEffect(() => {
         const  ctx = canvasRef.current.getContext("2d");
         const timer = setTimeout(() => {
-            gameRef.current = new Game(ctx, setPlayer, player, color);
+            gameRef.current = new Game(ctx, setPlayer, player);
             gameRef.current.setup();
-            // gRef.current.style = "transform: rotateZ(90deg)"
+            setTimeout(() => {
+                gameRef.current.isEnded = false;
+                gameRef.current.isPaused = false
+                setIsStarted(true)
+                setStartStatus(3)
+                clearInterval(interval)
+            }, 4000)
+            start_handler()
         }, 500)
         
         return () => {
@@ -253,54 +313,32 @@ export default function PingPong() {
             setPlayer([{...player[0], total:0, score:[0,0,0]},{...player[1], total:0, score:[0,0,0]}])
             delete gameRef.current;
             ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+            setIsStarted(false)
         }
     } , [restart])
 
-
     return (
-        <div className={`${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} bg-pong  w-full h-[94vh]  mt-2 rounded-sm p-2`}>
-            <div className="rounded-sm h-full bg-cover relative">
-                <div className='bg-darkBg/50 backdrop-blur-md text-[16px] w-14 rounded-sm h-[170px] absolute right-0 top-0 flex justify-center items-center'>
-                    <ul>
-                        <li className='text-center'><FontAwesomeIcon icon={faClose} /></li>
-                        <li className='mt-4 text-center'><FontAwesomeIcon  icon={faRotate}/></li>
-                        <li className='mt-4 text-center'><FontAwesomeIcon  icon={faImage}/></li>
-                        <li className='mt-4 text-center' ><FontAwesomeIcon  icon={faCirclePause}/></li>
-                    </ul>
-                </div>
+        <div className={`${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} bg-pong w-full h-[90vh] mt-2 rounded-sm p-2`}>
+            <div className={`rounded-sm h-full relative `}>
+                <ActionsMenu rotateHandler={rotateHandler} pauseHandler={pauseHandler} />
                 <Score data={player} /> 
                 {
                     (player[0].total == 3 || player[1].total == 3) &&
-                    <PlayerWon quitHandler={quitHandler} Restarthandler={resetHandler} color={color} />
+                    <PlayerWon quitHandler={quitHandler} Restarthandler={resetHandler} />
                 }
-                <div className={`flex justify-center items-center mt-2 h-5/6 p-2`}>
-                    <div ref={canvaParentRef} className={`${theme === 'light' ? "border-lightText" : "border-darkText"} rounded-sm backdrop-blur-lg border-[1px] p-1 flex justify-center items-center  w-3/4 h-full relative`}>
-                        <div className='h-fit w-10 absolute top-[50%] right-4 translate-y-[-50%] flex justify-center'>
-                            <div style={{accentColor:color}}>
-                                <ul className=''>
-                                    {
-                                        player[1].score.map((item, index) => {
-                                            return (
-                                                <li key={index}><input type="radio" onChange={() => {}} checked={item} /></li>
-                                            )
-                                        })
-                                    }
-                                </ul>
-                                <ul className=''>
-                                    {
-                                        player[0].score.map((item, index) => {
-                                            return (
-                                                <li key={index}><input type="radio" onChange={() => {}} checked={item} /></li>
-                                            )
-                                        })
-                                    }
-                                </ul>
-                            </div>
+                <div className={`flex justify-center items-center mt-2 h-[80vh]`}>
+                    {
+                        !isStarted && 
+                        <div className='absolute text-[80px] font-kaushan uppercase transition-all p-2 text-center h-fit text-white top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] z-30'>
+                            <h1 className=''>{startStatus}</h1>
                         </div>
-                        <canvas className={` border-[1px] bg-black/30 rounded-sm`} width="200px" height="400px"  ref={canvasRef}></canvas>
+                    }
+                    <div ref={canvaParentRef} className={` ${theme === 'light' ? "border-lightText" : "border-darkText"} rounded-sm w-8/12 flex justify-center items-center h-full relative transition-transform duration-1000`}>
+                        {/* <ScorePoints player={player} /> */}
+                        <canvas className={` border-[1px] bg-black/30 rounded-sm backdrop-blur-md`} width="350px" height="530px" ref={canvasRef}></canvas>
                     </div>
                 </div>
             </div>
         </div>
     )
-}4
+}

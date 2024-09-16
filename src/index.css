@@ -11,11 +11,17 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    overflow: hidden;
 }
 
 ::-webkit-scrollbar {
     width: 2px;
     height: 2px;
+    display: none;
 }
 ::-webkit-scrollbar-track {
     background: #f1f1f1;
