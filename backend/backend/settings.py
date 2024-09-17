@@ -34,7 +34,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # my apps
     'chat',
-    'authapp',
     'account',
 
     # third party apps
