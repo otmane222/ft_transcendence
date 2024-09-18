@@ -28,13 +28,37 @@ def signup(request):
 @permission_classes([AllowAny]) 
 def login(request):
     data = request.data
-    account = authenticate(email=data['email'], password=data['password'])
+
+    email=data['email']
+    password=data['password']
+    print(email)
+    print(password)
+    account = authenticate(request._request, email=email, password=password)
 
     if account:
-        login(request, account)
-        return Response({"message": "Login successful"})
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token), # https://www.youtube.com/watch?v=ZyC1lV2a77s&list=PLJlAVd0VeOMSF5z64X0nMZZwC88Q8pLBi&index=13
+        }, status=status.HTTP_200_OK) # https://www.youtube.com/watch?v=TLnH7rDkVgI&list=PL2z1gXAKH9c3dglbz0tvLqJTJPVPgjW1x&index=4 
+        # login(request._request, account) https://www.youtube.com/watch?v=xjMP0hspNLE&list=PL-51WBLyFTg1gPEHotYAhNAPsisChkyTc
+        # return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
     else:
         return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+# email = request.data.get('email')
+#     password = request.data.get('password')
+    
+#     # Authenticate using the email and password
+#     user = authenticate(request._request, email=email, password=password)
+    
+#     if user is not None:
+#         # Generate token or respond with success
+#         return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
+#     else:
+#         return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny]) 

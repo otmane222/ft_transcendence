@@ -49,14 +49,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-}
+# AUTHENTICATION_BACKENDS = [
+#     'backend.backend.EmailBackend',
+#     'django.contrib.auth.backends.ModelBackend', 
+# ]
+
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',
+#         'rest_framework.authentication.SessionAuthentication',
+#     ],
+# }
+
 
 MIDDLEWARE = [
     # other middleware
@@ -75,6 +79,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',  # Your React app URL
 ]
 
+AUTH_USER_MODEL = 'account.Account'
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
