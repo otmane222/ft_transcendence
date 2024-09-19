@@ -49,10 +49,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-# AUTHENTICATION_BACKENDS = [
-#     'backend.backend.EmailBackend',
-#     'django.contrib.auth.backends.ModelBackend', 
-# ]
+
+AUTHENTICATION_BACKENDS = [
+    # 'backend.backend.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend', 
+]
 
 # REST_FRAMEWORK = {
 #     'DEFAULT_AUTHENTICATION_CLASSES': [

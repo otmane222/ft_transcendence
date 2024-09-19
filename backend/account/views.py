@@ -29,14 +29,21 @@ def signup(request):
 def login(request):
     data = request.data
 
-    email=data['email']
-    password=data['password']
-    print(email)
-    print(password)
-    account = authenticate(request._request, email=email, password=password)
+    username = data.get('username')
+    password = data.get('password')
+
+    print(f"Attempting login for user: {username}")
+
+    # Authenticate user
+    account = authenticate(username=username, password=password)
+    # username=data['username']
+    # password=data['password']
+    # print(username)
+    # print(password)
+    # account = authenticate(request._request, username=username, password=password)
 
     if account:
-        refresh = RefreshToken.for_user(user)
+        refresh = RefreshToken.for_user(account)
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token), # https://www.youtube.com/watch?v=ZyC1lV2a77s&list=PLJlAVd0VeOMSF5z64X0nMZZwC88Q8pLBi&index=13
