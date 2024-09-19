@@ -47,7 +47,7 @@ def login(request):
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token), # https://www.youtube.com/watch?v=ZyC1lV2a77s&list=PLJlAVd0VeOMSF5z64X0nMZZwC88Q8pLBi&index=13
-        }, status=status.HTTP_200_OK) # https://www.youtube.com/watch?v=TLnH7rDkVgI&list=PL2z1gXAKH9c3dglbz0tvLqJTJPVPgjW1x&index=4 
+        }, status=status.HTTP_200_OK) # https://www.youtube.com/watch?v=ynIFkeZpXBw&list=PL2z1gXAKH9c3dglbz0tvLqJTJPVPgjW1x&index=5
         # login(request._request, account) https://www.youtube.com/watch?v=xjMP0hspNLE&list=PL-51WBLyFTg1gPEHotYAhNAPsisChkyTc
         # return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
     else:
