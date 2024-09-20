@@ -1,6 +1,8 @@
 
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.utils.timezone import now
+from django.contrib.auth.hashers import make_password
 
 class MyAccountManager(BaseUserManager):
       
@@ -33,12 +35,13 @@ def get_profile_image_filepath(self, filename):
 
 def get_default_profile_image():
 	return "default/default_profile_image.png"
+# https://chromewebstore.google.com/detail/dailydev-the-homepage-dev/jlmpjdjjbgclbocgajdjefcidcncaied?pli=1
+class Account(AbstractBaseUser):
+    email                       = models.EmailField(verbose_name="email", max_length=60, unique=True, default='default@example.com')
+    username                    = models.CharField(verbose_name="username", max_length=30, unique=True, default='yourusername')
+    password                    = models.CharField(max_length=128, default=make_password('default_password'))
 
-class Account(models.Model):
-    email                       = models.EmailField(verbose_name="email", max_length=60, unique=True)
-    username                    = models.CharField(max_length=30, unique=True)
-
-    date_joined                 = models.DateTimeField(verbose_name="date joined", auto_now_add=True)
+    date_joined                 = models.DateTimeField(verbose_name="date joined",  default=now)
     last_login                  = models.DateTimeField(verbose_name="last login", auto_now=True)
     is_admin                    = models.BooleanField(default=False)
     is_active                   = models.BooleanField(default=True)
@@ -51,8 +54,8 @@ class Account(models.Model):
 
     objects = MyAccountManager()
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
 	
     def __str__(self):
         return self.username

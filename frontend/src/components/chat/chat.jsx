@@ -10,7 +10,9 @@ import {
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useReducer, useState } from "react";
-import {ColorContext, ThemeContext} from '../../Contexts/ThemeContext'
+import {ColorContext, ThemeContext} from '../../Contexts/ThemeContext';
+
+// import { UserContext } from '../../Contexts/UserContext';
 import Categories, {reducerHandler} from './Categories'
 import { Link } from "react-router-dom";
 import { ConversationsHandlerContext, ConversationsProvider } from "../../Contexts/ConversationsContext";
@@ -98,6 +100,40 @@ export default function ConversationsList() {
     const theme = useContext(ThemeContext)
     const [visibleItem, setVisibleItem] = useState(null)
     const [data, dispatch] = useReducer(reducerHandler, iniConvs);
+    
+    
+    // https://www.youtube.com/watch?v=AcYF18oGn6Y
+    // const [userData, setUserData] = useState(null);
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState(null);
+    // const { accessToken } = useContext(UserContext); // get the JWT token from UserContext
+
+    // useEffect(() => {
+    //     const fetchUserData = async () => {
+    //         try {
+    //             const response = await axios.get('http://localhost:8000/auth/user/', {
+    //                 headers: {
+    //                     Authorization: `Bearer ${accessToken}`, // Pass the JWT token
+    //                 }
+    //             });
+    //             setUserData(response.data); // set the response data into state
+    //             setLoading(false);
+    //         } catch (error) {
+    //             setError('Error fetching user data');
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchUserData();
+    // }, [accessToken]);
+
+    // if (loading) {
+    //     return <div>Loading...</div>;
+    // }
+
+    // if (error) {
+    //     return <div>{error}</div>;
+    // }
 
     function Handler(text) {
         setCategorie(text);
@@ -132,53 +168,53 @@ export default function ConversationsList() {
 }
 
 const iniConvs = [
-    {
-        id:0,
-        display: true, 
-        name: 'aamhamdi unread', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48',
-        categorie: 'unread',
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-            {id:1, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-            {id:2, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-            {id:3, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-            {id:4, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-            {id:5, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        ]
-    },
-    {
-        id:1,
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'}
-        ],
-        display: true, 
-        name: 'aamhamdi group', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48', 
-        categorie: 'groups',
-    },
-    {
-        id:2,
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'}
-        ], 
-        display: true, 
-        name: 'aamhamdi', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48', 
-        categorie: 'user',
-    },
-    {
-        id:3,
-        conv : [
-            {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        ], 
-        display: true, 
-        name: 'aamhamdi archived', 
-        img:'/aamhamdi1.jpeg', 
-        date:'19:48', 
-        categorie: 'archived',
-    },
+    // {
+    //     id:0,
+    //     display: true, 
+    //     name: 'aamhamdi unread', 
+    //     img:'/aamhamdi1.jpeg', 
+    //     date:'19:48',
+    //     categorie: 'unread',
+    //     conv : [
+    //         {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+    //         {id:1, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
+    //         {id:2, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+    //         {id:3, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
+    //         {id:4, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
+    //         {id:5, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+    //     ]
+    // },
+    // {
+    //     id:1,
+    //     conv : [
+    //         {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'}
+    //     ],
+    //     display: true, 
+    //     name: 'aamhamdi group', 
+    //     img:'/aamhamdi1.jpeg', 
+    //     date:'19:48', 
+    //     categorie: 'groups',
+    // },
+    // {
+    //     id:2,
+    //     conv : [
+    //         {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'}
+    //     ], 
+    //     display: true, 
+    //     name: 'aamhamdi', 
+    //     img:'/aamhamdi1.jpeg', 
+    //     date:'19:48', 
+    //     categorie: 'user',
+    // },
+    // {
+    //     id:3,
+    //     conv : [
+    //         {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+    //     ], 
+    //     display: true, 
+    //     name: 'aamhamdi archived', 
+    //     img:'/aamhamdi1.jpeg', 
+    //     date:'19:48', 
+    //     categorie: 'archived',
+    // },
 ]

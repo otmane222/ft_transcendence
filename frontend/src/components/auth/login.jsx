@@ -44,6 +44,17 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
+    // const handleLogin = (credentials) => {
+    //     axios.post('http://localhost:8000/auth/login/', credentials)
+    //         .then(response => {
+    //             localStorage.setItem('jwt', response.data.token); // Store the token
+    //             // Optionally fetch user data here or let the context handle it
+    //         })
+    //         .catch(error => {
+    //             console.error('Login error:', error);
+    //         });
+    // };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {

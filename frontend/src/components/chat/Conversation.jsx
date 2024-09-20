@@ -44,10 +44,13 @@ function FromMessage({m}) {
 
 export default function Conversation() {
     const theme = useContext(ThemeContext)
-    const [messages, setMessages] = useState(data.conv)
+    const [messages, setMessages] = useState([])
     const [showEmoji, setShowEmoji] = useState(false)
     const [text, setText] = useState('');
     const cnv = useRef(null)
+
+
+
     
     function sendMessage() {
         flushSync(() => {
@@ -58,10 +61,13 @@ export default function Conversation() {
         cnv.current.scroll({top: cnv.current.scrollHeight, behavior: 'smooth'});
     }
 
+
     useEffect(() => {
-        console.log(cnv)
-        cnv.current.scroll({top: cnv.current.scrollHeight, behavior: 'auto'});
-    }, [])
+        // console.log(cnv)
+        if (cnv.current) { // Check if cnv.current is not null
+            cnv.current.scroll({ top: cnv.current.scrollHeight, behavior: 'auto' });
+        }
+    }, [messages])
 
     return (
         <div className={`
@@ -101,10 +107,10 @@ export default function Conversation() {
                             <FontAwesomeIcon className="cursor-pointer" icon={!showEmoji ? faFaceSmile : faKeyboard} onClick={() => setShowEmoji(!showEmoji)} />
                             <input style={{wordWrap: 'break-word'}} onKeyUp={(e) => {
                                 if (e.key == 'Enter')
-                                    sendMessage()
+                                    ;//sendMessage()
                             }} value={text}  type="text"  placeholder="message..." onChange={(e) => setText(e.target.value)} className="w-[80%] bg-transparent text-[12px] focus:outline-none" />
                             <FontAwesomeIcon className="cursor-pointer" icon={faPaperclip} />
-                            <FontAwesomeIcon className="cursor-pointer" icon={faPaperPlane} onClick={sendMessage} />
+                            <FontAwesomeIcon className="cursor-pointer" icon={faPaperPlane}  />
                         </div>
                     </div>
                 </div>
@@ -123,20 +129,25 @@ const data = {
     type:'user', 
     seen:false, 
     archived:false,
-    conv : [
-        {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        {id:1, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-        // {id:2, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        // {id:3, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-        // {id:4, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
-        // {id:5, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        // {id:6, message : 'Lorem ipsum dolor sit amet', from: 'nmaazouz normal', seen:false, date:'19:23'},
-        // {id:7, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        // {id:8, message : 'Lorem ipsum dolor sit amet', from: 'nmaazouz normal', seen:false, date:'19:23'},
-        // {id:9, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
-        // {id:10, message : 'Lorem ipsum dolor sit amet', from: 'nmaazouz normal', seen:false, date:'19:23'},
-        {id:11, message : '😁😁😁😁😁', from: 'aamhamdi normal', seen:false, date:'19:23'},
-    ]
+    conv : []
 }
 
-let nextId = data.conv.length;
+// let nextId
+// if (data.conv && data.conv.length > 0) {
+//     nextId = data.conv.length;
+// } else {
+//     nextId = 0;
+// }
+
+// {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+// {id:1, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
+// {id:2, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+// {id:3, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
+// {id:4, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
+// {id:5, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+// {id:6, message : 'Lorem ipsum dolor sit amet', from: 'nmaazouz normal', seen:false, date:'19:23'},
+// {id:7, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+// {id:8, message : 'Lorem ipsum dolor sit amet', from: 'nmaazouz normal', seen:false, date:'19:23'},
+// {id:9, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
+// {id:10, message : 'Lorem ipsum dolor sit amet', from: 'nmaazouz normal', seen:false, date:'19:23'},
+// {id:11, message : '😁😁😁😁😁', from: 'aamhamdi normal', seen:false, date:'19:23'},
