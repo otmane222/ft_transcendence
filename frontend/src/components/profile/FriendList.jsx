@@ -31,14 +31,26 @@ const friends = [
     {id:0, avatar: '/ava2.png', name:'jemmy', rate:'50'},
     {id:1, avatar: '/ava3.png', name:'CatWomen', rate:'70'},
     {id:2, avatar: '/ava1.png', name:'Batman', rate:'30'},
-    {id:2, avatar: '/ava2.png', name:'Batman', rate:'30'},
+    {id:3, avatar: '/ava2.png', name:'Batman', rate:'30'},
 ]
 
-export default function friendsList() {
-	const theme = useContext(ThemeContext)
+// export default function friendsList() {
+// 	const theme = useContext(ThemeContext)
+//     return (
+//         <div className={`${theme == 'light' ? "bg-lightItems" : ""} min-w-[190px]`}>
+//             {friends.map(f => <Link to={f.name}><FriendCard key={f.id} data={f}/></Link>)}
+//         </div>
+//     )
+// }
+export default function FriendsList() {
+    const theme = useContext(ThemeContext);
     return (
-        <div className={`${theme == 'light' ? "bg-lightItems" : ""} min-w-[190px]`}>
-            {friends.map(f => <Link to={f.name}><FriendCard key={f.id} data={f}/></Link>)}
+        <div className={`${theme === 'light' ? "bg-lightItems" : ""} min-w-[190px]`}>
+            {friends.map(f => (
+                <Link key={f.id} to={f.name}> {/* Moved key prop to the Link */}
+                    <FriendCard data={f} />
+                </Link>
+            ))}
         </div>
-    )
+    );
 }

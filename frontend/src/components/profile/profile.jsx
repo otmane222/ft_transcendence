@@ -9,7 +9,8 @@ import {ColorContext, ThemeContext} from '../../Contexts/ThemeContext'
 // import ReactApexChart from 'react-apexcharts'
 import { LineChart } from '@mui/x-charts/LineChart';
 import Status from "./status"
-
+import  { useEffect } from "react";
+import axios from "axios";
 
 
 
@@ -40,26 +41,29 @@ function Achivments() {
 					<h1>Achivments</h1>
 				</div>
 				<ul className='mt-4'>
-					{
-						achivments.map(a => {
-							return (
-								<li className='my-6 flex items-center justify-between px-6'>
-									<div className='flex items-center'>
-										<img src={a.icon} className='w-[45px]' alt="" />
-										<div className='ml-4'>
-											<h1 className='text-[13px]'>{a.title}</h1>
-											<p className='text-[10px] mt-1'>{a.des}</p>
-										</div>
+				{
+					achivments.map(a => {
+						return (
+							<li key={a.id} className='my-6 flex items-center justify-between px-6'> {/* Added key here */}
+								<div className='flex items-center'>
+									<img src={a.icon} className='w-[45px]' alt="" />
+									<div className='ml-4'>
+										<h1 className='text-[13px]'>{a.title}</h1>
+										<p className='text-[10px] mt-1'>{a.des}</p>
 									</div>
-									<h1 className='ml-10 text-[12px]'>{a.rec}</h1>
-									<div className='w-[120px] text-center'>
-										{a.achived ? <div className='ml-6 text-[12px] text-emerald-600'>achived <FontAwesomeIcon icon={faCheck} /> </div> : <div className='ml-6 text-[12px]'>not achived yet</div>}
-									</div>
-								</li>
-							)
-						})
-					}
-				</ul>
+								</div>
+								<h1 className='ml-10 text-[12px]'>{a.rec}</h1>
+								<div className='w-[120px] text-center'>
+									{a.achived 
+										? <div className='ml-6 text-[12px] text-emerald-600'>achived <FontAwesomeIcon icon={faCheck} /> </div> 
+										: <div className='ml-6 text-[12px]'>not achived yet</div>
+									}
+								</div>
+							</li>
+						)
+					})
+				}
+			</ul>
 			</div>
 		</>
 	)
@@ -70,6 +74,50 @@ export function PlayerStatus( {toggleExpanded, expand} ) {
 	const theme = useContext(ThemeContext);
 	const chartColor = theme == 'light' ? "#374151" : "#ffffff"
 	const color = useContext(ColorContext).substring(6,13)
+
+	const [data, setData] = useState(null);
+    const [error, setError] = useState(null);
+
+	const refreshAccessToken = async () => {
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            const response = await axios.post('http://localhost:8000/auth/refresh/', {
+                refresh: refreshToken,
+            });
+            const { access } = response.data;
+            localStorage.setItem('accessToken', access);
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            // Handle error (e.g., log out the user if refresh fails)
+        }
+    };
+
+    const fetchData = async () => {
+        const token = localStorage.getItem('accessToken');
+        try {
+            const response = await axios.get('http://localhost:8000/auth/user/', {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            setData(response.data);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            if (error.response.status === 401) {
+                await refreshAccessToken(); // Attempt to refresh token
+                fetchData(); // Retry fetching data
+            } else {
+                setError('Failed to fetch data');
+            }
+        }
+    };
+
+    useEffect(() => {
+        fetchData();
+    }, []);
+	// console.log(data)
+	
+	
     return (
 		<div className=" flex flex-col w-full h-full flex-grow overflow-scroll"> 
 			<div className={`flex rounded-sm w-full max-h-[550px] h-fit ${theme === 'light' ? "bg-lightItems" : "bg-darkItems border-darkText/30"}`}>

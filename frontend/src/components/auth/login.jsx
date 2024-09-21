@@ -58,22 +58,24 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            // Make a POST request to the login endpoint
             const response = await axios.post('http://localhost:8000/auth/login/', {
                 username,
                 password
             });
-            const { access } = response.data;
-
-            // Save the access token to localStorage
+            const { access, refresh } = response.data; // Get both tokens
+    
+            // Save tokens to localStorage
             localStorage.setItem('accessToken', access);
-
+            localStorage.setItem('refreshToken', refresh);
+    
             // Redirect to the dashboard
-            window.location.href = '/dashboard'; // Use window.location for redirection
+            window.location.href = '/dashboard';
         } catch (error) {
             setError('Invalid credentials');
         }
     };
+
+    
 
     return (
         <>

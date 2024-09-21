@@ -15,6 +15,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import {ColorContext, ThemeContext, ThemeToggelContext} from '../Contexts/ThemeContext'
 import axios from 'axios';
+import { Navigate } from 'react-router-dom';
 
 
 function SideBar() {
@@ -23,12 +24,28 @@ function SideBar() {
 	const color = useContext(ColorContext)
 	const themeHanlder = useContext(ThemeToggelContext);
 
+	
+	const refreshAccessToken = async () => {
+        const refreshToken = localStorage.getItem('refreshToken');
+        try {
+            const response = await axios.post('http://localhost:8000/auth/refresh/', {
+                refresh: refreshToken,
+            });
+            const { access } = response.data;
+            localStorage.setItem('accessToken', access);
+        } catch (error) {
+            console.error('Error refreshing token:', error);
+            // Handle error (e.g., log out the user if refresh fails)
+        }
+    };
+	
 	const handleLogout = async () => {
         try {
             const refreshToken = localStorage.getItem('refreshToken');
 			if (!refreshToken) {
                 console.error("No refresh token found");
 				localStorage.removeItem('accessToken');  // Remove the access token
+				window.location.href = '/auth/login'; 
                 return;
             }
             await axios.post('http://localhost:8000/auth/logout/',
@@ -37,7 +54,7 @@ function SideBar() {
 
             localStorage.removeItem('accessToken');  // Remove the access token
             localStorage.removeItem('refreshToken'); // Remove the refresh token
-            navigate('/auth/login');                // Redirect to login page
+			window.location.href = '/auth/login';               // Redirect to login page
         } catch (error) {
             console.error("Error during logout", error);
         }
