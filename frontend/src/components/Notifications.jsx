@@ -2,7 +2,7 @@ import { faBell, faCaretDown, faCheck, faTrash, faUserPlus, faCaretUp } from "@f
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useContext, useEffect, useState } from "react";
 import { ThemeContext } from "../Contexts/ThemeContext";
-
+import axios from "axios";
 
 function NotItem({data}) {
     return (
@@ -20,6 +20,7 @@ function NotItem({data}) {
 }
 
 function InviteItem({data}) {
+
     return (
         <li className="flex justify-between max-w-[260px] ml-[50%] translate-x-[-50%] items-center w-full p-2 h-10 my-3">
             <img src={data.img} alt="user" className="h-8 w-8 rounded-[50%]" />

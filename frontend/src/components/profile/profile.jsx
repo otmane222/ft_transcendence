@@ -46,7 +46,7 @@ function Achivments() {
 						return (
 							<li key={a.id} className='my-6 flex items-center justify-between px-6'> {/* Added key here */}
 								<div className='flex items-center'>
-									<img src={a.icon} className='w-[45px]' alt="" />
+									{/* <img src={src={data?.profile_image || 'http://localhost:8000/media/profile_images/default.jpg'}} className='w-[45px]' alt="" /> */}
 									<div className='ml-4'>
 										<h1 className='text-[13px]'>{a.title}</h1>
 										<p className='text-[10px] mt-1'>{a.des}</p>
@@ -92,30 +92,38 @@ export function PlayerStatus( {toggleExpanded, expand} ) {
         }
     };
 
-    const fetchData = async () => {
-        const token = localStorage.getItem('accessToken');
-        try {
-            const response = await axios.get('http://localhost:8000/auth/user/', {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            setData(response.data);
-        } catch (error) {
-            console.error('Error fetching data:', error);
-            if (error.response.status === 401) {
-                await refreshAccessToken(); // Attempt to refresh token
-                fetchData(); // Retry fetching data
-            } else {
-                setError('Failed to fetch data');
-            }
-        }
-    };
-
+	const fetchData = async (retry = true) => {
+		const token = localStorage.getItem('accessToken');
+		try {
+			const response = await axios.get('http://localhost:8000/auth/user/', {
+				headers: {
+					Authorization: `Bearer ${token}`,
+				},
+			});
+			setData(response.data);
+		} catch (error) {
+			console.error('Error fetching data:', error);
+			if (error.response && error.response.status === 401 && retry) {
+				try {
+					await refreshAccessToken(); // Attempt to refresh token
+					fetchData(false); // Retry fetching data once, passing retry as false
+				} catch (refreshError) {
+					console.error('Error refreshing token:', refreshError);
+					setError('Session expired. Please log in again.');
+				}
+			} else {
+				setError('Failed to fetch data');
+			}
+		}
+	};
+	
     useEffect(() => {
-        fetchData();
+		fetchData();
+		
     }, []);
-	// console.log(data)
+	if (data){
+		console.log(data)
+	}
 	
 	
     return (
@@ -124,11 +132,17 @@ export function PlayerStatus( {toggleExpanded, expand} ) {
 				<div className="w-[65%] min-w-[180px] flex flex-col px-10 py-2">
 					<div className="h-[50px] w-[85%] flex justify-between items-center ">
 							<div className="w-[10%]">
-								<img src="/aamhamdi1.jpeg" alt="Description" className=" h-[95%] w-[92%] rounded-full shadow-sm" />
+							<img 
+								src={
+								data?.profile_image ? data.profile_image
+								: 'http://localhost:8000/media/filo/default_profile_image.png'} 
+								alt="Profile" 
+								className="h-[95%] w-[92%] rounded-full shadow-sm"
+							/>
 							</div>
 							<div className=" flex flex-col justify-between h-[45%] w-[87%] ">
 								<p className={`text-[10px] font-thin ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>Hello</p>
-								<p className={`text-[12px] font-semibold  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>aamhamdi</p>
+								<p className={`text-[12px] font-semibold  ${theme === 'light' ? "text-lightText" : "text-darkText"} `}>{data?.username || 'username'}</p>
 								
 							</div>
 					</div>

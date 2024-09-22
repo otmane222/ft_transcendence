@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
+
 class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -17,10 +18,12 @@ class LogoutView(APIView):
 
 urlpatterns = [
     path('signup/', views.signup, name='signup'),
-    # path('login/', views.login, name='login'),
-    # path('logout/', views.logout, name='logout'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('user/', views.AccountDetailView.as_view(), name='account-detail'),
-    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('user/', views.AccountDetailView.as_view(), name='account-detail'),
+    path('users/', views.UserListView.as_view(), name='user-list'),
 ]
+
+# path('login/', views.login, name='login'),
+# path('logout/', views.logout, name='logout'),

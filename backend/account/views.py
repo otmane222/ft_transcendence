@@ -13,6 +13,12 @@ import logging
 logger = logging.getLogger(__name__)
 
 from .serializers import AccountSerializer
+from rest_framework import generics
+
+class UserListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Account.objects.all()  # Fetch all users
+    serializer_class = AccountSerializer
 
 class AccountDetailView(APIView):
     permission_classes = [IsAuthenticated]

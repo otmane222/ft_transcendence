@@ -33,8 +33,8 @@ class MyAccountManager(BaseUserManager):
 def get_profile_image_filepath(self, filename):
 	return 'profile_images/' + str(self.pk) + '/profile_image.png'
 
-def get_default_profile_image():
-	return "default/default_profile_image.png"
+# def get_default_profile_image():
+# 	return "filo/default_profile_image.pngg"
 # https://chromewebstore.google.com/detail/dailydev-the-homepage-dev/jlmpjdjjbgclbocgajdjefcidcncaied?pli=1
 class Account(AbstractBaseUser):
     email                       = models.EmailField(verbose_name="email", max_length=60, unique=True, default='default@example.com')
@@ -49,7 +49,7 @@ class Account(AbstractBaseUser):
     is_superuser                = models.BooleanField(default=False)
 
     bio                         = models.TextField(max_length=500, blank=True)
-    profile_image               = models.ImageField(max_length=255, upload_to=get_profile_image_filepath, null=True, blank=True, default=get_default_profile_image)
+    profile_image               = models.ImageField(max_length=255, upload_to=get_profile_image_filepath, null=True, blank=True, default=None)
     birth_date                  = models.DateField(null=True, blank=True)
 
     objects = MyAccountManager()
