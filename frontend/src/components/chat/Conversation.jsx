@@ -2,7 +2,7 @@
 import {useContext, useState, useRef, useEffect} from 'react'
 import {ThemeContext} from '../../Contexts/ThemeContext'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { 
     faArrowLeft, 
     faCheckDouble, 
@@ -15,6 +15,47 @@ import {
 import Emojies from './Emojies';
 import {flushSync} from 'react-dom'
 
+import axios from 'axios';
+
+const refreshAccessToken = async () => {
+    const refreshToken = localStorage.getItem('refreshToken');
+    try {
+        const response = await axios.post('http://localhost:8000/auth/refresh/', {
+            refresh: refreshToken,
+        });
+        const { access } = response.data;
+        localStorage.setItem('accessToken', access);
+    } catch (error) {
+        console.error('Error refreshing token:', error);
+        throw new Error('Unable to refresh token');
+    }
+};
+
+const fetchMessages = async (chatId, retry = true) => {
+    const token = localStorage.getItem('accessToken');
+    try {
+        const response = await axios.get(`http://localhost:8000/chats/${chatId}/messages/`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        if (error.response && error.response.status === 401 && retry) {
+            // Token expired, try to refresh it
+            try {
+                await refreshAccessToken();
+                return fetchMessages(chatId, false); // Retry fetching messages
+            } catch (refreshError) {
+                console.error('Error refreshing token:', refreshError);
+                throw new Error('Session expired. Please log in again.');
+            }
+        } else {
+            throw new Error('Failed to fetch messages');
+        }
+    }
+};
 function UserMessage({m}) {
     return (
         <li className="mt-4 flex p-1 items-center justify-start">
@@ -43,38 +84,41 @@ function FromMessage({m}) {
 }
 
 export default function Conversation() {
+
+    const { id: chatId } = useParams();
     const theme = useContext(ThemeContext)
-    const [messages, setMessages] = useState([])
     const [showEmoji, setShowEmoji] = useState(false)
     const [text, setText] = useState('');
     const cnv = useRef(null)
 
 
+    const [messages, setMessages] = useState([]);
+    const [error, setError] = useState(null);
 
-    
-    function sendMessage() {
-        flushSync(() => {
-            setMessages([...messages , {id:nextId++, message: text, from:data.name, date:'12:33', seen : false}])
-        })
-        setText('');
-        setShowEmoji(false);
-        cnv.current.scroll({top: cnv.current.scrollHeight, behavior: 'smooth'});
+    useEffect(() => {
+        const loadMessages = async () => {
+            try {
+                const data = await fetchMessages(chatId);
+                setMessages(data);
+            } catch (err) {
+                setError(err.message);
+            }
+        };
+
+        loadMessages();
+    }, [chatId]);
+
+    if (error) {
+        return <div>{error}</div>;
     }
 
 
-    useEffect(() => {
-        // console.log(cnv)
-        if (cnv.current) { // Check if cnv.current is not null
-            cnv.current.scroll({ top: cnv.current.scrollHeight, behavior: 'auto' });
-        }
-    }, [messages])
-
     return (
         <div className={`
-            conversations 
-            ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} 
-            shadow-sm h-[89vh] rounded-sm flex justify-center p-1 flex-grow`
-        }>
+                conversations 
+                ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} 
+                shadow-sm h-[89vh] rounded-sm flex justify-center p-1 flex-grow`
+            }>
             <div className="relative h-full w-full">
                 <div className="header  w-full px-10 h-[60px] flex justify-between items-center mt-2">
                     <div className="avatar w-[95%] h-full flex justify-start items-center">
@@ -93,9 +137,9 @@ export default function Conversation() {
                     {messages.length ? 
                         <ul ref={cnv} className="mt-10 px-2 max-w-[600px] w-full overflow-auto" style={{height:'calc(70vh - 42px)'}}>
                         {messages.map(m => {
-                                if (m.from === data.name)
-                                    return <UserMessage key={m.id} m={m} />
-                                return <FromMessage key={m.id} m={m} />
+                            if (m.from === data.name)
+                                return <UserMessage key={m.id} m={m} />
+                            return <FromMessage key={m.id} m={m} />
                         })} 
                         </ul>
                     : <h1 className="text-center mt-[70%] ml-[50%] translate-x-[-50%] text-[10px] absolute">no messages yet</h1>}
@@ -119,6 +163,23 @@ export default function Conversation() {
     )
 }
 
+// function sendMessage() {
+//     flushSync(() => {
+//         setMessages([...messages , {id:nextId++, message: text, from:data.name, date:'12:33', seen : false}])
+//     })
+//     setText('');
+//     setShowEmoji(false);
+//     cnv.current.scroll({top: cnv.current.scrollHeight, behavior: 'smooth'});
+// }
+
+
+// useEffect(() => {
+//     // console.log(cnv)
+//     if (cnv.current) { // Check if cnv.current is not null
+//         cnv.current.scroll({ top: cnv.current.scrollHeight, behavior: 'auto' });
+//     }
+// }, [messages])
+
 const data = {
     id:0,
     display: true, 
@@ -134,11 +195,11 @@ const data = {
 
 // let nextId
 // if (data.conv && data.conv.length > 0) {
-//     nextId = data.conv.length;
-// } else {
-//     nextId = 0;
-// }
-
+    //     nextId = data.conv.length;
+    // } else {
+        //     nextId = 0;
+        // }
+        
 // {id:0, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},
 // {id:1, message : 'dolor sit amet.', from: 'nmaazouz', seen:false, date:'19:24'},
 // {id:2, message : 'Lorem ipsum dolor sit amet', from: 'aamhamdi normal', seen:false, date:'19:23'},

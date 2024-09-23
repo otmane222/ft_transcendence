@@ -1,9 +1,25 @@
-# # views.py
-# from rest_framework import viewsets
-# from rest_framework.permissions import IsAuthenticated
-# from .models import Chat, Message
-# from .serializers import ChatSerializer, MessageSerializer
-# from rest_framework.views import APIView
+from rest_framework import viewsets
+from .serializers import ChatSerializer, MessageSerializer
+from .models import Chat, Message
+
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+
+@permission_classes([AllowAny]) 
+class ChatViewSet(viewsets.ModelViewSet):
+    queryset = Chat.objects.all()
+    serializer_class = ChatSerializer
+
+@permission_classes([AllowAny]) 
+class MessageViewSet(viewsets.ModelViewSet):
+    serializer_class = MessageSerializer
+
+    def get_queryset(self):
+        chat_id = self.kwargs['chat_id']
+        return Message.objects.filter(chat_id=chat_id)
+
+    def perform_create(self, serializer):
+        serializer.save(sender=self.request.user)
 
 # class ChatViewSet(viewsets.ModelViewSet):
 #     serializer_class = ChatSerializer

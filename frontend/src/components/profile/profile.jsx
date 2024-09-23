@@ -121,9 +121,9 @@ export function PlayerStatus( {toggleExpanded, expand} ) {
 		fetchData();
 		
     }, []);
-	if (data){
-		console.log(data)
-	}
+	// if (data){
+	// 	console.log(data)
+	// }
 	
 	
     return (
@@ -134,8 +134,7 @@ export function PlayerStatus( {toggleExpanded, expand} ) {
 							<div className="w-[10%]">
 							<img 
 								src={
-								data?.profile_image ? data.profile_image
-								: 'http://localhost:8000/media/filo/default_profile_image.png'} 
+								data?.profile_image || 'http://localhost:8000/media/filo/default_profile_image.jpeg'}
 								alt="Profile" 
 								className="h-[95%] w-[92%] rounded-full shadow-sm"
 							/>

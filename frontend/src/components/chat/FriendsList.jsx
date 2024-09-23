@@ -10,12 +10,16 @@ function FriendItem({data}) {
         <Link to="1">
             <li className="w-full h-[50px] mt-2 flex justify-center items-center cursor-pointer">
                 <div className="img relative w-[35px] h-[35px] m-1">
-                    <img src={data.img} className="w-[35px] h-[35px] rounded-[50%]" alt="img" />
-                    <div className={`dot w-[10px] h-[10px] rounded-full absolute top-[30px] ${data.status !== 'active' ? "bg-rose-400" : "bg-teal-400"}`}></div>
+                    <img src={
+                            data?.profile_image || 'http://localhost:8000/media/filo/default_profile_image.jpeg'
+                        }
+                        className="w-[35px] h-[35px] rounded-[50%]" alt="img"
+                    />
+                    <div className={`dot w-[10px] h-[10px] rounded-full absolute top-[30px] ${data.is_active !== true ? "bg-rose-400" : "bg-teal-400"}`}></div>
                 </div>
                 <div className="content text-[10px] w-[70px]">
-                    <h1 className="font-bold ">{data.name}</h1>
-                    <p className="text-[7px] mt-1">{data.status}</p>
+                    <h1 className="font-bold ">{data.username}</h1>
+                    <p className="text-[7px] mt-1">{data.is_active}</p>
                 </div>
             </li>
         </Link>
@@ -24,7 +28,7 @@ function FriendItem({data}) {
 
 export default function FriendsList() {
 
-    const [users, setUsers] = useState([]);
+    const [users, setUsers] = useState(null);
     const theme = useContext(ThemeContext);
 
     const [data, setData] = useState(null);
@@ -53,7 +57,7 @@ export default function FriendsList() {
 					Authorization: `Bearer ${token}`,
 				},
 			});
-			setData(response.data);
+			setUsers(response.data);
 		} catch (error) {
 			console.error('Error fetching data:', error);
 			if (error.response && error.response.status === 401 && retry) {
@@ -74,9 +78,9 @@ export default function FriendsList() {
 		fetchData();
 		
     }, []);
-	if (data){
-		console.log(data)
-	}
+	// if (users){
+	// 	console.log(users)
+	// }
 
     return (
         <div className={`
@@ -88,7 +92,7 @@ export default function FriendsList() {
                 <FontAwesomeIcon icon={faUserGroup} />
             </div>
             <ul>
-                {users.length > 0 ? (
+                {users?.length > 0 ? (
                     users.map(user => <FriendItem key={user.id} data={user} />)
                 ) : (
                     <li>No users found</li>
