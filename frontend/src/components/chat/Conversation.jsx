@@ -34,7 +34,7 @@ const refreshAccessToken = async () => {
 const fetchMessages = async (chatId, retry = true) => {
     const token = localStorage.getItem('accessToken');
     try {
-        const response = await axios.get(`http://localhost:8000/chats/${chatId}/messages/`, {
+        const response = await axios.get(`http://localhost:8000/chat/${chatId}/messages/`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -95,25 +95,26 @@ export default function Conversation() {
 
     useEffect(() => {
         const fetchMessages = async () => {
-        try {
-            const response = await axios.get(`/chat/${chatId}/messages/`, {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('access_token')}`
+            try {
+                // console.log(`${chatId}`)
+                const response = await axios.get(`/chat/${chatId}/messages/`, {  // Use backticks here
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`  // Use backticks and proper string format for token
+                    }
+                });
+                setMessages(response.data);
+            } catch (error) {
+                console.error('Error fetching messages:', error);
             }
-            });
-            setMessages(response.data);
-        } catch (error) {
-            console.error('Error fetching messages:', error);
-        }
         };
 
         fetchMessages();
     }, [chatId]);
 
-    if (messages)
-    {
-        console.log(messages)
+    if (messages.length > 0) {
+        console.log(messages);
     }
+
 
     return (
         <div className={`
