@@ -1,22 +1,18 @@
-
 from rest_framework import serializers
-from account.models import Account
 from .models import Chat, Message
+from account.models import Account
+
+class MessageSerializer(serializers.ModelSerializer):
+    sender = serializers.StringRelatedField(read_only=True)
+
+    class Meta:
+        model = Message
+        fields = ['id', 'chat', 'sender', 'receiver', 'content', 'timestamp']
 
 class ChatSerializer(serializers.ModelSerializer):
-    participants = serializers.SlugRelatedField(
-        many=True, 
-        slug_field='username', 
-        queryset=Account.objects.all()
-    )
+    participants = serializers.StringRelatedField(many=True)
+    messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Chat
         fields = ['id', 'participants', 'created_at']
-
-class MessageSerializer(serializers.ModelSerializer):
-    sender = serializers.SlugRelatedField(slug_field='username', queryset=Account.objects.all())
-
-    class Meta:
-        model = Message
-        fields = ['id', 'chat', 'sender', 'content', 'timestamp']

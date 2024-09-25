@@ -11,9 +11,11 @@ class Chat(models.Model):
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, related_name='messages', on_delete=models.CASCADE)
-    sender = models.ForeignKey(Account, on_delete=models.CASCADE)
+    sender = models.ForeignKey(Account, related_name='sent_messages', on_delete=models.CASCADE)
+    receiver = models.ForeignKey(Account, related_name='received_messages', on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Message from {self.sender.username} in chat {self.chat.id}"
+        return f"Message from {self.sender.username} to {self.receiver.username} in chat {self.chat.id}"
+

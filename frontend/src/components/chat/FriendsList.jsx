@@ -7,7 +7,7 @@ import axios from 'axios';
 
 function FriendItem({data}) {
     return (
-        <Link to="1">
+        <Link to={`${data.id}`}>
             <li className="w-full h-[50px] mt-2 flex justify-center items-center cursor-pointer">
                 <div className="img relative w-[35px] h-[35px] m-1">
                     <img src={

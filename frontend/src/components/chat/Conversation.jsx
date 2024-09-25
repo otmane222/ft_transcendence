@@ -91,27 +91,29 @@ export default function Conversation() {
     const [text, setText] = useState('');
     const cnv = useRef(null)
 
-
     const [messages, setMessages] = useState([]);
-    const [error, setError] = useState(null);
 
     useEffect(() => {
-        const loadMessages = async () => {
-            try {
-                const data = await fetchMessages(chatId);
-                setMessages(data);
-            } catch (err) {
-                setError(err.message);
+        const fetchMessages = async () => {
+        try {
+            const response = await axios.get(`/chat/${chatId}/messages/`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('access_token')}`
             }
+            });
+            setMessages(response.data);
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        }
         };
 
-        loadMessages();
+        fetchMessages();
     }, [chatId]);
 
-    if (error) {
-        return <div>{error}</div>;
+    if (messages)
+    {
+        console.log(messages)
     }
-
 
     return (
         <div className={`
@@ -134,7 +136,7 @@ export default function Conversation() {
                     <FontAwesomeIcon className="text-[12px]" icon={faEllipsisVertical} />
                 </div>
                 <div className="body relative flex justify-center">
-                    {messages.length ? 
+                    {/* {messages.length ? 
                         <ul ref={cnv} className="mt-10 px-2 max-w-[600px] w-full overflow-auto" style={{height:'calc(70vh - 42px)'}}>
                         {messages.map(m => {
                             if (m.from === data.name)
@@ -142,7 +144,9 @@ export default function Conversation() {
                             return <FromMessage key={m.id} m={m} />
                         })} 
                         </ul>
-                    : <h1 className="text-center mt-[70%] ml-[50%] translate-x-[-50%] text-[10px] absolute">no messages yet</h1>}
+                    : */}
+                    <h1 className="text-center mt-[50px] ml-[50px] translate-x-[-50%] text-[10px] absolute">no messages yet</h1> 
+                    {/* } */}
                 </div>
                 <div className="actions mt-2 absolute w-full h-[40px] bottom-2 flex justify-center">
                     <div className=' w-full max-w-[600px] relative' >
