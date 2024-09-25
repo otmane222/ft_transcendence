@@ -93,27 +93,27 @@ export default function Conversation() {
 
     const [messages, setMessages] = useState([]);
 
-    useEffect(() => {
-        const fetchMessages = async () => {
-            try {
-                // console.log(`${chatId}`)
-                const response = await axios.get(`/chat/${chatId}/messages/`, {  // Use backticks here
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`  // Use backticks and proper string format for token
-                    }
-                });
-                setMessages(response.data);
-            } catch (error) {
-                console.error('Error fetching messages:', error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchMessages = async () => {
+    //         try {
+    //             // console.log(`${chatId}`)
+    //             const response = await axios.get(`/chat/${chatId}/messages/`, {  // Use backticks here
+    //                 headers: {
+    //                     Authorization: `Bearer ${localStorage.getItem('accessToken')}`  // Use backticks and proper string format for token
+    //                 }
+    //             });
+    //             setMessages(response.data);
+    //         } catch (error) {
+    //             console.error('Error fetching messages:', error);
+    //         }
+    //     };
 
-        fetchMessages();
-    }, [chatId]);
+    //     fetchMessages();
+    // }, [chatId]);
 
-    if (messages.length > 0) {
-        console.log(messages);
-    }
+    // if (messages.length > 0) {
+    //     console.log(messages);
+    // }
 
 
     return (

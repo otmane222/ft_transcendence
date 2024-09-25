@@ -5,10 +5,12 @@ import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 
-function FriendItem({data}) {
+function FriendItem({data, onSelectUser}) {
     return (
-        <Link to={`${data.id}`}>
-            <li className="w-full h-[50px] mt-2 flex justify-center items-center cursor-pointer">
+        //<Link to={`${data.id}`}>
+            <li className="w-full h-[50px] mt-2 flex justify-center items-center cursor-pointer"
+            onClick={() => onSelectUser(data.id)}
+            >
                 <div className="img relative w-[35px] h-[35px] m-1">
                     <img src={
                             data?.profile_image || 'http://localhost:8000/media/filo/default_profile_image.jpeg'
@@ -22,11 +24,11 @@ function FriendItem({data}) {
                     <p className="text-[7px] mt-1">{data.is_active}</p>
                 </div>
             </li>
-        </Link>
+        // </Link>
     )
 }
 
-export default function FriendsList() {
+export default function FriendsList({ onSelectUser }) {
 
     const [users, setUsers] = useState(null);
     const theme = useContext(ThemeContext);
@@ -93,7 +95,7 @@ export default function FriendsList() {
             </div>
             <ul>
                 {users?.length > 0 ? (
-                    users.map(user => <FriendItem key={user.id} data={user} />)
+                    users.map(user => <FriendItem  key={user.id} data={user} onSelectUser={onSelectUser} />)
                 ) : (
                     <li>No users found</li>
                 )}
