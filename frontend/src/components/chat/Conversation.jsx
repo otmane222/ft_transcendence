@@ -16,6 +16,7 @@ import Emojies from './Emojies';
 import {flushSync} from 'react-dom'
 
 import axios from 'axios';
+import AuthContext from '../../Contexts/AuthContext';
 
 const refreshAccessToken = async () => {
     const refreshToken = localStorage.getItem('refreshToken');
@@ -90,6 +91,8 @@ export default function Conversation() {
     const [showEmoji, setShowEmoji] = useState(false)
     const [text, setText] = useState('');
     const cnv = useRef(null)
+    const {user} = useParams()
+    const tokens = useContext(AuthContext)
 
     const [messages, setMessages] = useState([]);
 
@@ -97,12 +100,12 @@ export default function Conversation() {
     //     const fetchMessages = async () => {
     //         try {
     //             // console.log(`${chatId}`)
-    //             const response = await axios.get(`/chat/${chatId}/messages/`, {  // Use backticks here
+    //             const response = await axios.get(`/chat/1/messages/`, {  // Use backticks here
     //                 headers: {
     //                     Authorization: `Bearer ${localStorage.getItem('accessToken')}`  // Use backticks and proper string format for token
     //                 }
     //             });
-    //             setMessages(response.data);
+    //             setMessages(response.data.data);
     //         } catch (error) {
     //             console.error('Error fetching messages:', error);
     //         }
@@ -111,7 +114,7 @@ export default function Conversation() {
     //     fetchMessages();
     // }, [chatId]);
 
-    // if (messages.length > 0) {
+    // if (messages) {
     //     console.log(messages);
     // }
 
@@ -120,7 +123,7 @@ export default function Conversation() {
         <div className={`
                 conversations 
                 ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} 
-                shadow-sm h-[89vh] rounded-sm flex justify-center p-1 flex-grow`
+                shadow-sm h-[500px] rounded-sm flex justify-center p-1 flex-grow`
             }>
             <div className="relative h-full w-full">
                 <div className="header  w-full px-10 h-[60px] flex justify-between items-center mt-2">

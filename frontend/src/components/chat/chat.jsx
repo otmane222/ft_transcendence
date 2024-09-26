@@ -103,37 +103,7 @@ export default function ConversationsList() {
     
     
     // https://www.youtube.com/watch?v=AcYF18oGn6Y
-    // const [userData, setUserData] = useState(null);
-    // const [loading, setLoading] = useState(true);
-    // const [error, setError] = useState(null);
-    // const { accessToken } = useContext(UserContext); // get the JWT token from UserContext
-
-    // useEffect(() => {
-    //     const fetchUserData = async () => {
-    //         try {
-    //             const response = await axios.get('http://localhost:8000/auth/user/', {
-    //                 headers: {
-    //                     Authorization: `Bearer ${accessToken}`, // Pass the JWT token
-    //                 }
-    //             });
-    //             setUserData(response.data); // set the response data into state
-    //             setLoading(false);
-    //         } catch (error) {
-    //             setError('Error fetching user data');
-    //             setLoading(false);
-    //         }
-    //     };
-
-    //     fetchUserData();
-    // }, [accessToken]);
-
-    // if (loading) {
-    //     return <div>Loading...</div>;
-    // }
-
-    // if (error) {
-    //     return <div>{error}</div>;
-    // }
+    
 
     function Handler(text) {
         setCategorie(text);
@@ -147,7 +117,7 @@ export default function ConversationsList() {
         <div className={`
             conversations 
             ${theme === 'light' ? "bg-lightItems text-lightText" : "bg-darkItems text-darkText"} 
-            shadow-sm h-full rounded-sm p-1 flex-grow overflow-y-auto`
+            shadow-sm h-[500px] rounded-sm p-1 flex-grow overflow-y-auto`
         }>
             <div>
                 <div className="header w-full h-[50px] flex justify-between items-center text-[14px] px-4">

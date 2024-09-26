@@ -10,9 +10,12 @@ class MessageSerializer(serializers.ModelSerializer):
         fields = ['id', 'chat', 'sender', 'receiver', 'content', 'timestamp']
 
 class ChatSerializer(serializers.ModelSerializer):
-    participants = serializers.StringRelatedField(many=True)
-    messages = MessageSerializer(many=True, read_only=True)
+    participants = serializers.SlugRelatedField(
+        many=True,
+        slug_field='username',  # Or 'id' if you want to use IDs
+        read_only=True
+    )
 
     class Meta:
         model = Chat
-        fields = ['id','messages', 'participants', 'created_at']
+        fields = ['id', 'participants', 'created_at']

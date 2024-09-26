@@ -2,14 +2,16 @@ import { useState, useContext, useEffect } from "react"
 import {ThemeContext} from '../../Contexts/ThemeContext'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserGroup } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import React, { createContext } from 'react';
 import axios from 'axios';
 
-function FriendItem({data, onSelectUser}) {
+
+function FriendItem({data}) {
     return (
-        //<Link to={`${data.id}`}>
-            <li className="w-full h-[50px] mt-2 flex justify-center items-center cursor-pointer"
-            onClick={() => onSelectUser(data.id)}
+        <Link to={`${data.username}`}>
+            <li  
+            className="w-full h-[50px] mt-2 flex justify-center items-center cursor-pointer"
             >
                 <div className="img relative w-[35px] h-[35px] m-1">
                     <img src={
@@ -24,7 +26,7 @@ function FriendItem({data, onSelectUser}) {
                     <p className="text-[7px] mt-1">{data.is_active}</p>
                 </div>
             </li>
-        // </Link>
+        </Link>
     )
 }
 
@@ -47,7 +49,6 @@ export default function FriendsList({ onSelectUser }) {
         } catch (error) {
             console.error('Error refreshing token:', error);
             setError(error)
-            // Handle error (e.g., log out the user if refresh fails)
         }
     };
 
@@ -80,9 +81,6 @@ export default function FriendsList({ onSelectUser }) {
 		fetchData();
 		
     }, []);
-	// if (users){
-	// 	console.log(users)
-	// }
 
     return (
         <div className={`
@@ -95,7 +93,7 @@ export default function FriendsList({ onSelectUser }) {
             </div>
             <ul>
                 {users?.length > 0 ? (
-                    users.map(user => <FriendItem  key={user.id} data={user} onSelectUser={onSelectUser} />)
+                    users.map(user => <FriendItem  key={user.id} data={user} />)
                 ) : (
                     <li>No users found</li>
                 )}

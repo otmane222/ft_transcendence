@@ -19,6 +19,8 @@ import Setings from './components/settings/Setings'
 import Conversation from './components/chat/Conversation'
 
 import {ThemeProvider, ColorProvider} from './Contexts/ThemeContext'
+import AuthProvider from './Contexts/AuthContext'
+
 import { useState } from 'react'
 import ConversationsList from './components/chat/chat'
 import Tournament from './components/game/tournament'
@@ -72,8 +74,8 @@ const router = createBrowserRouter(
 
       {/* chat  */}
 		  <Route path='chat' element={<ChatLayout />}>
-			  <Route index element={<ConversationsList/>} />
-			  <Route path=':id' element={<Conversation />} />
+			  {/* <Route index element={<ConversationsList/>} /> */}
+			  <Route path=':user' element={<Conversation />} />
 		  </Route>
 
       {/* profile */}
@@ -104,6 +106,7 @@ function App() {
   }
   const [theme, setTheme] = useState(appliedTheme)
   const [color, setColor] = useState(appliedColor);
+  const [token, setToken] = useState({mytoken:'', username:''})
 
   function ThemeHandler(theme) {
     setTheme(theme);
@@ -114,16 +117,27 @@ function App() {
     setColor(color);
     window.localStorage.setItem('color' , color) 
   }
+  function tokenHandler(mytoken) {
+    if (mytoken) {
+      const data = jwtDecode(mytoken)
+      const username = data.username;
+      setToken({...token, mytoken, username})
+    } else {
+      setToken({mytoken:'', username:''})
+    }
+  }
 
   return (
     <div style={{backgroundSize:'50px 50px'}} className={`${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
-      <ThemeProvider theme={theme} handler={ThemeHandler}>
-        <ColorProvider color={color} handler={colorHandler}>
-          <div className='container max-w-[1400px] mx-auto'>
-            <RouterProvider router={router} />
-          </div>
-        </ColorProvider>
-      </ThemeProvider>
+        <AuthProvider token={token} tokenHandler={tokenHandler}>
+            <ThemeProvider theme={theme} handler={ThemeHandler}>
+                <ColorProvider color={color} handler={colorHandler}>
+                    <div className='container max-w-[1400px] mx-auto'>
+                        <RouterProvider router={router} />
+                    </div>
+                </ColorProvider>
+            </ThemeProvider>
+        </AuthProvider>
     </div>
   )
 }
