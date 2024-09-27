@@ -8,40 +8,69 @@ from .models import Chat, Message
 from .serializers import MessageSerializer, ChatSerializer
 from account.models import Account
 
-@permission_classes([AllowAny]) 
+# @permission_classes([AllowAny]) 
 class ChatView(APIView):
     def post(self, request):
         current_user = request.user
         friend_id = request.data.get('participants')
 
+        # Ensure the friend exists
         try:
-            friend = Account.objects.get(id=friend_id)
+            friend = Account.objects.get(username=friend_id)
         except Account.DoesNotExist:
-            return Response({"erroro": "User not found"}, status=404)
+            return Response({"error": "User not found"}, status=404)
 
+        # Prevent the user from chatting with themselves
+        if current_user == friend:
+            return Response({"error": "You cannot start a chat with yourself"}, status=400)
+
+        # Check if a chat between the two participants already exists
         chat = Chat.objects.filter(participants=current_user).filter(participants=friend).first()
 
         if not chat:
+            # Create a new chat and add both participants
             chat = Chat.objects.create()
             chat.participants.add(current_user, friend)
 
+        # Serialize and return the chat
         serializer = ChatSerializer(chat)
         return Response(serializer.data)
 
-@permission_classes([AllowAny]) 
-class ChatMessagesView(APIView):
-    def get(self, request, chat_id):
+# @permission_classes([AllowAny]) 
+class MessageView(APIView):
+    def post(self, request):
+        sender = request.user
+        chat_id = request.data.get('chat_id')
+        receiver_id = request.data.get('receiver_id')
+        content = request.data.get('content')
+
+        # Validate that chat exists
         try:
             chat = Chat.objects.get(id=chat_id)
         except Chat.DoesNotExist:
             return Response({"error": "Chat not found"}, status=404)
 
-        messages = chat.messages.all().order_by('timestamp')  # Get all messages in the chat
-        serializer = MessageSerializer(messages, many=True)
+        # Validate that receiver exists and is a participant of the chat
+        try:
+            receiver = Account.objects.get(id=receiver_id)
+        except Account.DoesNotExist:
+            return Response({"error": "Receiver not found"}, status=404)
 
-        return Response(serializer.data)
+        if receiver not in chat.participants.all():
+            return Response({"error": "Receiver is not a participant of this chat"}, status=400)
 
-@permission_classes([AllowAny]) 
+        # Create and save the message
+        message = Message.objects.create(
+            chat=chat,
+            sender=sender,
+            receiver=receiver,
+            content=content
+        )
+
+        serializer = MessageSerializer(message)
+        return Response(serializer.data, status=201)
+
+# @permission_classes([AllowAny]) 
 class ChatListView(APIView):
     permission_classes = [IsAuthenticated]
 

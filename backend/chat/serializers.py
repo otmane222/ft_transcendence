@@ -12,10 +12,18 @@ class MessageSerializer(serializers.ModelSerializer):
 class ChatSerializer(serializers.ModelSerializer):
     participants = serializers.SlugRelatedField(
         many=True,
-        slug_field='username',  # Or 'id' if you want to use IDs
+        slug_field='username',
         read_only=True
     )
+    last_message = serializers.SerializerMethodField()
 
     class Meta:
         model = Chat
-        fields = ['id', 'participants', 'created_at']
+        fields = ['id', 'participants', 'created_at', 'last_message']
+
+    def get_last_message(self, obj):
+        last_message = obj.messages.order_by('-timestamp').first()
+        if last_message:
+            return MessageSerializer(last_message).data
+        return None
+        azertyuioppdh##11

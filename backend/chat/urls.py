@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ChatView, ChatMessagesView, ChatListView
+from .views import ChatView, MessageView, ChatListView
 
 urlpatterns = [
     # URL to create or retrieve a chat between two users
@@ -7,5 +7,5 @@ urlpatterns = [
 
     path('list/', ChatListView.as_view(), name='list_chats'),
     # URL to get messages for a specific chat by chat ID
-    path('<int:chat_id>/messages/', ChatMessagesView.as_view(), name='chat_messages'),
+    path('<int:chat_id>/messages/', MessageView.as_view(), name='chat_messages'),
 ]
