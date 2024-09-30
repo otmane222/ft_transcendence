@@ -189,32 +189,62 @@ export default function Conversation() {
     //     console.log(messages)
     // }
 
-    const sendMessage = async () => {
-        if (text.trim() === '') return; // Prevent empty messages
+    // const sendMessage = async () => {
+    //     if (text.trim() === '') return; // Prevent empty messages
 
-        try {
-            const response = await axios.post(`http://localhost:8000/chat/${chat.id}/messages/`,
-                {
-                    chat_id: chat?.id, // Assuming you have the current user's ID
-                    receiver: friend?.id, // The ID of the other participant in the chat
-                    content: text,
-                }
-                , {
-                    headers: {
-                        Authorization: `Bearer ${token}` // Send token if needed
-                    }
-                }
-            );
+    //     try {
+    //         const response = await axios.post(`http://localhost:8000/chat/${chat.id}/messages/`,
+    //             {
+    //                 chat_id: chat?.id, // Assuming you have the current user's ID
+    //                 receiver: friend?.id, // The ID of the other participant in the chat
+    //                 content: text,
+    //             }
+    //             , {
+    //                 headers: {
+    //                     Authorization: `Bearer ${token}` // Send token if needed
+    //                 }
+    //             }
+    //         );
 
-            // Clear the input field after message is sent
-            setText('');
+    //         // Clear the input field after message is sent
+    //         setText('');
 
-            // Optionally, update the local message list with the new message
-            console.log('Message sent:', response.data);
-        } catch (error) {
-            console.error('Error sending message:', error);
+    //         // Optionally, update the local message list with the new message
+    //         console.log('Message sent:', response.data);
+    //     } catch (error) {
+    //         console.error('Error sending message:', error);
+    //     }
+    // };
+
+    const [socket, setSocket] = useState(null);
+    useEffect(() => {
+        // Open WebSocket connection when the component mounts
+        const ws = new WebSocket(`ws://localhost:8000/ws/chat/${chat?.id}/`);
+        setSocket(ws);
+
+        // Handle incoming messages
+        ws.onmessage = (event) => {
+            const datas = JSON.parse(event.data);
+            setMessages((prevMessages) => [...prevMessages, datas]);
+        };
+
+        // Clean up the WebSocket connection when the component unmounts
+        return () => {
+            ws.close();
+        };
+    }, [chat]);
+
+    const sendMessage = () => {
+        if (socket && text.trim() !== '') {
+            // Send a message through the WebSocket
+            socket.send(JSON.stringify({
+                'message': text,
+                'sender': userme.id, // Your current user's ID
+            }));
+            setText(''); // Clear the input field
         }
     };
+
     const formattedDate = formatDate(friend?.last_login);
     return (
         <div className={`

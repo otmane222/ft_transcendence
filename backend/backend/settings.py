@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -60,6 +61,13 @@ AUTHENTICATION_BACKENDS = [
     # 'backend.backend.EmailBackend',
     'django.contrib.auth.backends.ModelBackend', 
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",  # For production, use Redis
+    },
+}
+
 from datetime import timedelta
 
 
