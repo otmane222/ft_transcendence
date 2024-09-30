@@ -20,6 +20,7 @@ import Conversation from './components/chat/Conversation'
 
 import {ThemeProvider, ColorProvider} from './Contexts/ThemeContext'
 import AuthProvider from './Contexts/AuthContext'
+import TokenProvider from './Contexts/TokenContext';
 
 import { useState } from 'react'
 import ConversationsList from './components/chat/chat'
@@ -117,27 +118,29 @@ function App() {
     setColor(color);
     window.localStorage.setItem('color' , color) 
   }
-  function tokenHandler(mytoken) {
-    if (mytoken) {
-      const data = jwtDecode(mytoken)
-      const username = data.username;
-      setToken({...token, mytoken, username})
-    } else {
-      setToken({mytoken:'', username:''})
-    }
-  }
+//   function tokenHandler(mytoken) {
+//     if (mytoken) {
+//       const data = jwtDecode(mytoken)
+//       const username = data.username;
+//       setToken({...token, mytoken, username})
+//     } else {
+//       setToken({mytoken:'', username:''})
+//     }
+//   }
 
   return (
     <div style={{backgroundSize:'50px 50px'}} className={`${theme === 'light' ? "bg-lightBg" : "bg-darkBg"}`}>
-        <AuthProvider token={token} tokenHandler={tokenHandler}>
-            <ThemeProvider theme={theme} handler={ThemeHandler}>
-                <ColorProvider color={color} handler={colorHandler}>
-                    <div className='container max-w-[1400px] mx-auto'>
-                        <RouterProvider router={router} />
-                    </div>
-                </ColorProvider>
-            </ThemeProvider>
-        </AuthProvider>
+        <TokenProvider>
+            <AuthProvider>
+                <ThemeProvider theme={theme} handler={ThemeHandler}>
+                    <ColorProvider color={color} handler={colorHandler}>
+                        <div className='container max-w-[1400px] mx-auto'>
+                            <RouterProvider router={router} />
+                        </div>
+                    </ColorProvider>
+                </ThemeProvider>
+            </AuthProvider>
+        </TokenProvider>
     </div>
   )
 }

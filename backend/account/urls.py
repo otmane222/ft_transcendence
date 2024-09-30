@@ -23,6 +23,7 @@ urlpatterns = [
     path('refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('user/', views.AccountDetailView.as_view(), name='account-detail'),
     path('users/', views.UserListView.as_view(), name='user-list'),
+    path('user/<str:username>/', views.GetUserByUsername.as_view(), name='get_user_by_username'),
 ]
 
 # path('login/', views.login, name='login'),

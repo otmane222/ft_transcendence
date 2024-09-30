@@ -7,16 +7,17 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from .models import Chat, Message
 from .serializers import MessageSerializer, ChatSerializer
 from account.models import Account
+from django.db import transaction
+from django.db.models import Q
 
-# @permission_classes([AllowAny]) 
 class ChatView(APIView):
     def post(self, request):
         current_user = request.user
-        friend_id = request.data.get('participants')
+        friend_username = request.data.get('participants')
 
         # Ensure the friend exists
         try:
-            friend = Account.objects.get(username=friend_id)
+            friend = Account.objects.get(username=friend_username)
         except Account.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
 
@@ -25,9 +26,10 @@ class ChatView(APIView):
             return Response({"error": "You cannot start a chat with yourself"}, status=400)
 
         # Check if a chat between the two participants already exists
-        chat = Chat.objects.filter(participants=current_user).filter(participants=friend).first()
 
-        if not chat:
+        chat = Chat.objects.filter(participants=current_user).filter(participants=friend).first()
+ 
+        if chat is None:
             # Create a new chat and add both participants
             chat = Chat.objects.create()
             chat.participants.add(current_user, friend)
@@ -36,12 +38,23 @@ class ChatView(APIView):
         serializer = ChatSerializer(chat)
         return Response(serializer.data)
 
-# @permission_classes([AllowAny]) 
-class MessageView(APIView):
-    def post(self, request):
+class ChatMessagesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, chat_id):
+        try:
+            chat = Chat.objects.get(id=chat_id)
+        except Chat.DoesNotExist:
+            return Response({"error": "Chat not found"}, status=404)
+
+        # Fetch all messages for the chat
+        messages = Message.objects.filter(chat=chat).order_by('timestamp')
+        serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, chat_id):
         sender = request.user
-        chat_id = request.data.get('chat_id')
-        receiver_id = request.data.get('receiver_id')
+        receiver_id = request.data.get('receiver')
         content = request.data.get('content')
 
         # Validate that chat exists
@@ -69,6 +82,7 @@ class MessageView(APIView):
 
         serializer = MessageSerializer(message)
         return Response(serializer.data, status=201)
+
 
 # @permission_classes([AllowAny]) 
 class ChatListView(APIView):

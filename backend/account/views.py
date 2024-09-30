@@ -21,9 +21,22 @@ class UserListView(generics.ListAPIView):
     queryset = Account.objects.all()  # Fetch all users
     serializer_class = AccountSerializer
 
+class GetUserByUsername(APIView):
+    permission_classes = [IsAuthenticated]  # Ensure the user is authenticated
+
+    def get(self, request, username):
+        try:
+            # Fetch the user by username
+            user = Account.objects.get(username=username)
+        except Account.DoesNotExist:
+            return Response({"error": "Userr not found"}, status=404)
+
+        # Serialize the user data
+        serializer = AccountSerializer(user)
+        return Response(serializer.data, status=200)
+
 class AccountDetailView(APIView):
     permission_classes = [IsAuthenticated]
-
     def get(self, request, *args, **kwargs):
         # Get the currently authenticated user
         user = request.user
