@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'account',
 
     # third party apps
+    'daphne',
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
@@ -70,8 +71,6 @@ CHANNEL_LAYERS = {
 
 from datetime import timedelta
 
-
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Adjust as needed
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -85,12 +84,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#         'rest_framework.authentication.SessionAuthentication',
-#     ],
-# }
 
 
 MIDDLEWARE = [
@@ -129,6 +122,7 @@ TEMPLATES = [
     },
 ]
 
+ASGI_APPLICATION = 'backend.asgi.application'
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 
