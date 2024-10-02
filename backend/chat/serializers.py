@@ -7,7 +7,7 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'chat', 'sender', 'receiver', 'content', 'timestamp']
+        fields = ['id', 'chat', 'sender', 'content', 'timestamp']
 
 class ChatSerializer(serializers.ModelSerializer):
     participants = serializers.SlugRelatedField(

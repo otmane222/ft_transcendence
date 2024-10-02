@@ -118,6 +118,14 @@ export default function Conversation() {
     
     const [friend, setFriend] = useState(null);
     
+    useEffect(() => {
+        if (cnv.current) {
+          cnv.current.scrollTo({
+            top: cnv.current.scrollHeight,
+            behavior: 'smooth', // Smooth scrolling
+          });
+        }
+      }, [messages]); 
     // const token = localStorage.getItem('accessToken')
     
     useEffect(() => {
@@ -137,10 +145,10 @@ export default function Conversation() {
             // console.log("creating chatId: " , user)
             try {
                 const response = await axios.post("http://localhost:8000/chat/",
-                {participants: user}, // This is the friend's username or ID
-                {headers: {
-                    Authorization: `Bearer ${token}` // Pass the user's token for authentication
-                }},
+                    {participants: user}, // This is the friend's username or ID
+                    {headers: {
+                        Authorization: `Bearer ${token}` // Pass the user's token for authentication
+                    }},
                 );
                 setChat(response.data); // Set the chat data if successful
             }
@@ -189,48 +197,32 @@ export default function Conversation() {
     //     console.log(messages)
     // }
 
-    // const sendMessage = async () => {
-    //     if (text.trim() === '') return; // Prevent empty messages
-
-    //     try {
-    //         const response = await axios.post(`http://localhost:8000/chat/${chat.id}/messages/`,
-    //             {
-    //                 chat_id: chat?.id, // Assuming you have the current user's ID
-    //                 receiver: friend?.id, // The ID of the other participant in the chat
-    //                 content: text,
-    //             }
-    //             , {
-    //                 headers: {
-    //                     Authorization: `Bearer ${token}` // Send token if needed
-    //                 }
-    //             }
-    //         );
-
-    //         // Clear the input field after message is sent
-    //         setText('');
-
-    //         // Optionally, update the local message list with the new message
-    //         console.log('Message sent:', response.data);
-    //     } catch (error) {
-    //         console.error('Error sending message:', error);
-    //     }
-    // };
 
     const [socket, setSocket] = useState(null);
     useEffect(() => {
         // Open WebSocket connection when the component mounts
-        const ws = new WebSocket(`ws://localhost:8000/ws/chat/${chat?.id}/`);
-        setSocket(ws);
-
-        // Handle incoming messages
-        ws.onmessage = (event) => {
-            const datas = JSON.parse(event.data);
-            setMessages((prevMessages) => [...prevMessages, datas]);
+        if (!chat)
+            return
+        const chatSocket = new WebSocket(`ws://localhost:8000/ws/chat/${chat?.id}/`);
+        setSocket(chatSocket);
+        
+        chatSocket.onmessage = (event) => {
+            console.log("New message received");
+            try {
+                const datas = JSON.parse(event.data);  // Parse the incoming message data
+                setMessages((PrevMessages) => {
+                    const updatedMessages = [...PrevMessages, datas];
+                    // console.log("Updated messages:", updatedMessages);
+                    return updatedMessages;
+                });
+                console.log("Parsed message data:", datas.message);
+            } catch (error) {
+                console.error("Error parsing WebSocket message data:", error);
+            }
         };
 
-        // Clean up the WebSocket connection when the component unmounts
         return () => {
-            ws.close();
+            chatSocket.close();
         };
     }, [chat]);
 
@@ -238,7 +230,7 @@ export default function Conversation() {
         if (socket && text.trim() !== '') {
             // Send a message through the WebSocket
             socket.send(JSON.stringify({
-                'message': text,
+                'content': text,
                 'sender': userme.id, // Your current user's ID
             }));
             setText(''); // Clear the input field
@@ -273,11 +265,16 @@ export default function Conversation() {
                 <div className="body relative flex justify-center">
                     {messages.length ? 
                         <ul ref={cnv} className="mt-10 px-2 max-w-[600px] w-full overflow-auto" style={{height:'calc(600px - 42px)'}}>
-                        {messages.map(m => {
+                        {/* {messages.map(m => {
                             if (m.sender === userme?.username)
                                 return <UserMessage key={m.id} m={m} />
                             return <FromMessage key={m.id} m={m} />
-                        })} 
+                        })}  */}
+                        {messages.map((m, index) => {
+                            if (m.sender === userme?.username)
+                                return <UserMessage key={index} m={m} />
+                            return <FromMessage key={index} m={m} />
+                        })}
                         </ul>
                     :
                     <h1 className="text-center mt-[50px] ml-[50px] translate-x-[-50%] text-[10px] absolute">no messages yet</h1> 

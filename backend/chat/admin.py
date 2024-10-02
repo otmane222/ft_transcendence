@@ -17,9 +17,9 @@ class ChatAdmin(admin.ModelAdmin):
     get_participants.short_description = 'Participants'
 
 class MessageAdmin(admin.ModelAdmin):
-    list_display = ('chat', 'sender', 'receiver', 'content', 'timestamp')
-    list_filter = ('chat', 'sender', 'receiver')
-    search_fields = ('content', 'sender__username', 'receiver__username')
+    list_display = ('chat', 'sender', 'content', 'timestamp')
+    list_filter = ('chat', 'sender')
+    search_fields = ('content', 'sender__username')
 
 
 # Register the models
