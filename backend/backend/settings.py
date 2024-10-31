@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     # my apps
     'chat',
     'account',
+    'game',
 
     # third party apps
     'daphne',

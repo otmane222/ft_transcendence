@@ -118,6 +118,7 @@ export default function Conversation() {
     
     const [friend, setFriend] = useState(null);
     
+    // const cnv = useRef(null)
     useEffect(() => {
         if (cnv.current) {
           cnv.current.scrollTo({
