@@ -59,16 +59,26 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",  # Adjust to your frontend URL
 ]
 
-AUTHENTICATION_BACKENDS = [
-    # 'backend.backend.EmailBackend',
-    'django.contrib.auth.backends.ModelBackend', 
-]
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)],
+#         },
+#     },
+# }
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer",  # For production, use Redis
     },
 }
+
+AUTHENTICATION_BACKENDS = [
+    # 'backend.backend.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend', 
+]
+
 
 from datetime import timedelta
 
